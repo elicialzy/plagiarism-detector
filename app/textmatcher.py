@@ -46,7 +46,8 @@ class Text:
             self.spans = spans
             return tokens
         tokenSpans = list(zip(tokens, spans))  # zip it up
-        stopwords = nltk.corpus.stopwords.words('english')  # get stopwords
+        with open('nltk_data/stopwords/english') as f:
+            stopwords = [i.replace('\n', '') for i in f.readlines()] # get english stopwords from nltk_data folder
         tokenSpans = [token for token in tokenSpans if token[0] not in stopwords]  # remove stopwords from zip
         self.spans = [x[1] for x in tokenSpans]  # unzip; get spans
         return [x[0] for x in tokenSpans]  # unzip; get tokens

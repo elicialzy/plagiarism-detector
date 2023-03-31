@@ -3,12 +3,10 @@ import json
 import nltk
 import pandas as pd
 
-nltk.download("punkt", download_dir="nltk_data/")
-nltk.download("stopwords", download_dir="nltk_data/")
+import boto3
 import difflib
 import tarfile
 
-import boto3
 import joblib
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
@@ -16,27 +14,16 @@ from sklearn.metrics.pairwise import cosine_similarity
 from nltk import tokenize
 from sentence_transformers import SentenceTransformer
 
+from textmatcher import Text, Matcher
+
+######## CONFIGURATIONS ########
+s3_bucket = 'nus-sambaash'
+s3_folderpath = 'plagiarism-detector/'
+sentbert_model_name = 'trained_bert_model.tar.gz'
+final_model_name = 'final_model.tar.gz'
+ngrams_lst = [1,4,5]
+
 ######## DIRECT MATCHING FUNCTIONS ########
-
-def get_textmatcher_library(bucket):
-    """
-    Download pre-build textmatcher library from S3 bucket and runs it
-
-    Args:
-        bucket (str): Name of S3 bucket.
-
-    Returns:
-        code (class): Pre-built textmatcher class.
-    """
-    textmatcher_key = 'plagiarism-detector/textmatcher.py'
-
-    s3 = boto3.client('s3')
-    response = s3.get_object(Bucket=bucket, Key=textmatcher_key)
-    code = response['Body'].read().decode('utf-8')
-    
-    return code
-    
-exec(get_textmatcher_library(s3_bucket))
 
 def read_s3_df(bucket, filepath):
     """
@@ -105,7 +92,7 @@ def get_matching_texts(input_text_lst, source_doc):
             if len(match) != 0:
                 match_lst.append(input_sent_dict)
                 output_dict = input_sent_dict.copy()
-                output_dict['source_sentence'] = match['source_sentence']
+                output_dict['source_sentence'] = match[0]['source_sentence']
                 output_dict['score'] = match[0]['score']
                 output_lst.append(output_dict)
                     
@@ -183,7 +170,7 @@ def get_avg_score(input_text_lst, output_lst):
 
 ######## PARAPHRASED MATCHING FUNCTIONS ########
 
-def load_sentbert_model(bucket, filepath, directory, sentbert_model_name):
+def load_sentbert_model(bucket, filepath, sentbert_model_name):
     """
     Gets trained Sentence Transformer model based on target s3 bucket and file path.
     
@@ -199,13 +186,13 @@ def load_sentbert_model(bucket, filepath, directory, sentbert_model_name):
     s3client.download_file(
         Bucket = bucket,
         Key = filepath,
-        Filename = sentbert_model_name
+        Filename = '/tmp/'+sentbert_model_name
     )
     
-    tar_file = tarfile.open(sentbert_model_name)
-    tar_file.extractall('./model_folder')
+    tar_file = tarfile.open('/tmp/'+sentbert_model_name)
+    tar_file.extractall('/tmp/model_folder')
     tar_file.close()
-    return SentenceTransformer(directory+'model_folder/trained_bert_model.h5')
+    return SentenceTransformer('/tmp/model_folder/trained_bert_model.h5')
 
 def get_paraphrase_predictions(model, nonmatch_lst, source_doc, threshold):
     """
@@ -257,24 +244,6 @@ def get_paraphrase_predictions(model, nonmatch_lst, source_doc, threshold):
         pass
                 
     return res_list
-
-def get_default_device():
-    """
-    Picking GPU if available or else CPU.
-    """
-    if torch.cuda.is_available():
-        return torch.device('cuda')
-    else:
-        return torch.device('cpu')
-    
-def to_device(data, device):
-    """
-    Move tensor(s) to chosen device.
-    """
-    if isinstance(data, (list,tuple)):
-        return [to_device(x, device) for x in data]
-    
-    return data.to(device, non_blocking=True)
 
 ######## FEATURE GENERATION FUNCTIONS ########
 
@@ -343,13 +312,14 @@ def load_final_model(bucket, filepath, final_model_name):
     s3client.download_file(
         Bucket = bucket,
         Key = filepath,
-        Filename = final_model_name
+        Filename = '/tmp/'+final_model_name
     )
     
-    tar_file = tarfile.open(final_model_name)
-    tar_file.extractall('./model_folder')
+    tar_file = tarfile.open('/tmp/'+final_model_name)
+    tar_file.extractall('/tmp/model_folder')
     tar_file.close()
-    final_model = joblib.load('model_folder/final_model.joblib')
+    
+    final_model = joblib.load('/tmp/model_folder/logReg_F1_model.joblib')
     
     return final_model     
 
@@ -394,12 +364,11 @@ def get_flag_score_prediction(final_model_name, feature_df):
 
 ######## FINAL OUTPUT GENERATION FUNCTIONS ########
 
-def one_one_matching(directory, s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_name, input_doc, input_name):
+def one_one_matching(s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_name, input_doc, input_name):
     """
     One-to-one matching function - given 2 documents, compare and return the plagiarised flag, score and plagiarised texts.
 
     Args:
-        directory (str): File directory.
         s3_bucket (str): Name of S3 bucket.
         s3_folderpath (str): Filepath of trained models.
         sentbert_model_name (str): Filepath of trained Sentence Transformer model.
@@ -416,13 +385,13 @@ def one_one_matching(directory, s3_bucket, s3_folderpath, sentbert_model_name, f
     direct_output, match_lst = get_matching_texts(input_text_lst, source_doc)
     
     nonmatch_lst = get_non_direct_texts(input_text_lst, match_lst)
-    sentence_trans_model = load_sentbert_model(s3_bucket, s3_folderpath+sentbert_model_name, directory, sentbert_model_name)
+    sentence_trans_model = load_sentbert_model(s3_bucket, s3_folderpath+sentbert_model_name, sentbert_model_name)
     paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, 0.7)
-    
+
     plagiarised_text = direct_output + paraphrase_output
     plagiarised_text = sorted(plagiarised_text, key=lambda d: d['start_char_index'])
 
-    new_direct_output, new_paraphrase_output = modified_output_lists(direct_output, paraphrase_output, 0.85)
+    new_direct_output, new_paraphrase_output = modified_output_lists(direct_output, paraphrase_output, 0.95)
     
     direct_avg_score = get_avg_score(input_text_lst, new_direct_output)
     paraphrase_avg_score = get_avg_score(input_text_lst, new_paraphrase_output)
@@ -442,12 +411,11 @@ def one_one_matching(directory, s3_bucket, s3_folderpath, sentbert_model_name, f
     
     return output_dict
 
-def get_matching_output(directory, s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_name):
+def get_matching_output(s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_name):
     """
     One-to-many strings matching function - given 1 document and a list of documents, compare and return the plagiarised flag, score and plagiarised texts.
 
     Args:
-        directory (str): File directory.
         s3_bucket (str): Name of S3 bucket.
         s3_folderpath (str): Filepath of trained models.
         sentbert_model_name (str): Filepath of trained Sentence Transformer model.
@@ -462,7 +430,7 @@ def get_matching_output(directory, s3_bucket, s3_folderpath, sentbert_model_name
     """
     output_lst = []
     for i in source_docs:
-        temp_dict = one_one_matching(directory, s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, i['source_doc'], i['source_doc_name'], input_doc, input_name)
+        temp_dict = one_one_matching(s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, i['source_doc'], i['source_doc_name'], input_doc, input_name)
         output_lst.append(temp_dict)
     
     return output_lst
