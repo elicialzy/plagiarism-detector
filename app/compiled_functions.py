@@ -1,27 +1,24 @@
+import difflib
 import json
-
-import nltk
-import pandas as pd
+import re
+from statistics import mean
 
 import boto3
-import difflib
-import tarfile
-
 import joblib
+import nltk
 import numpy as np
+import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from nltk import tokenize
-from sentence_transformers import SentenceTransformer
+from textmatcher import Matcher, Text
 
-from textmatcher import Text, Matcher
 
 ######## CONFIGURATIONS ########
-s3_bucket = 'nus-sambaash'
-s3_folderpath = 'plagiarism-detector/'
-sentbert_model_name = 'trained_bert_model.tar.gz'
-final_model_name = 'final_model.tar.gz'
+
+sentbert_model_name = 'models/trained_bert_model.gz'
+final_model_name = 'models/final_model.joblib'
 ngrams_lst = [1,4,5]
+
 
 ######## DIRECT MATCHING FUNCTIONS ########
 
@@ -53,7 +50,10 @@ def get_preprocessed_sent(input_doc):
     """
     input_doc = str(input_doc)
     input_doc = input_doc.replace('\n', '')
-    input_text_lst = tokenize.sent_tokenize(input_doc)
+
+    input_text_lst = re.split(r' *[\.\?!][\'"\)\]]* *', input_doc)
+    input_text_lst = [text for text in input_text_lst if text]
+
     res = []
     start_char = 1
 
@@ -63,7 +63,7 @@ def get_preprocessed_sent(input_doc):
     
     return res
 
-def get_matching_texts(input_text_lst, source_doc):
+def get_matching_texts(input_text_lst, source_doc, source_doc_name):
     """
     Returns list of dictionary of matching texts 
         (input_doc_text, input_doc_start, input_doc_end, source_doc_text, 
@@ -73,6 +73,7 @@ def get_matching_texts(input_text_lst, source_doc):
     Args:
         input_text_lst (list): Input document of interest, split by sentences.
         source_doc (string): Source input document.
+        source_doc_name (str): Name of source document.
 
     Returns:
         output_lst (list): List of dictionary of matching texts and their details.
@@ -93,6 +94,7 @@ def get_matching_texts(input_text_lst, source_doc):
                 match_lst.append(input_sent_dict)
                 output_dict = input_sent_dict.copy()
                 output_dict['source_sentence'] = match[0]['source_sentence']
+                output_dict['source_doc_name'] = source_doc_name
                 output_dict['score'] = match[0]['score']
                 output_lst.append(output_dict)
                     
@@ -168,33 +170,15 @@ def get_avg_score(input_text_lst, output_lst):
 
     return avg_score
 
+
 ######## PARAPHRASED MATCHING FUNCTIONS ########
 
-def load_sentbert_model(bucket, filepath, sentbert_model_name):
-    """
-    Gets trained Sentence Transformer model based on target s3 bucket and file path.
-    
-    Args: 
-        bucket (str): Mame of S3 bucket.
-        filepath (str): Filepath of trained model in S3.
-        sentbert_model_name (str): Filepath of the Sentence Transformer model.
-            
-    Returns:
-        model (SentenceTransformer): Trained Sentence Transformer model.
-    """
-    s3client = boto3.client('s3')
-    s3client.download_file(
-        Bucket = bucket,
-        Key = filepath,
-        Filename = '/tmp/'+sentbert_model_name
-    )
-    
-    tar_file = tarfile.open('/tmp/'+sentbert_model_name)
-    tar_file.extractall('/tmp/model_folder')
-    tar_file.close()
-    return SentenceTransformer('/tmp/model_folder/trained_bert_model.h5')
+def load_model(model_name):
+    ""
+    model = joblib.load(model_name)
+    return model
 
-def get_paraphrase_predictions(model, nonmatch_lst, source_doc, threshold):
+def get_paraphrase_predictions(model, nonmatch_lst, source_doc, source_doc_name, threshold):
     """
     Returns a list of json containing paraphrased sentences' details, predicted from trained Sentence Transformer model.
     
@@ -202,6 +186,7 @@ def get_paraphrase_predictions(model, nonmatch_lst, source_doc, threshold):
         model (SentenceTransformer): Sentence Transformer model.
         nonmatch_lst (list[str]): List of sentences not detected as direct matches. 
         source_doc (str): Source document.
+        source_doc_name (str): Name of source document.
         threshold (float): Threshold of similarity score to flag sentence as paraphrased.
             
     Returns:
@@ -219,7 +204,9 @@ def get_paraphrase_predictions(model, nonmatch_lst, source_doc, threshold):
     """
     res_list = []
     try:
-        source_sent = tokenize.sent_tokenize(source_doc)
+        source_sent = re.split(r' *[\.\?!][\'"\)\]]* *', source_doc)
+        source_sent = [text for text in source_sent if text]
+
         for input_sent_dict in nonmatch_lst:
             input_sent = input_sent_dict['sentence']
             if len(input_sent.split()) <= 3:
@@ -238,12 +225,14 @@ def get_paraphrase_predictions(model, nonmatch_lst, source_doc, threshold):
             if score > threshold:
                 temp = input_sent_dict
                 temp['source_sentence'] = source_sent[res[0].argmax()]
+                temp['source_doc_name'] = source_doc_name
                 temp['score'] = score
                 res_list.append(temp)
     except:
         pass
                 
     return res_list
+
 
 ######## FEATURE GENERATION FUNCTIONS ########
 
@@ -284,6 +273,26 @@ def get_containment_scores(input_doc, source_doc, ngrams_lst):
     
     return containment_scores
 
+def get_n_avg_containment_scores(containment_scores_lst, ngrams_lst):
+    """
+    Get average containment scores from all the containment scores generated across all the source_documents.
+
+    Args:
+        containment_scores_lst (list[dict]): A list of dictionaries containing each source_document & input_document pair's containment scores.
+        ngrams_lst (lst): List of selected n_grams used to generate containment scores.
+
+    Returns:
+        avg_containment_scores (dict): A dictionary of all average containment_scores across all source_documents.
+    """
+    avg_containment_scores = {}
+
+    for ngram in ngrams_lst: 
+        key_name = f"c_{ngram}"
+        avg_containment_scores[key_name]= mean([containment.get(key_name) for containment in containment_scores_lst])
+
+    return avg_containment_scores
+
+
 def get_lcm_score(input_doc, source_doc):
     max_len = max(len(input_doc), len(source_doc))
     matcher = difflib.SequenceMatcher(None, input_doc, source_doc)
@@ -293,35 +302,8 @@ def get_lcm_score(input_doc, source_doc):
     
     return lcs_ratio
 
-######## final MODEL LOADING & PREDICTION FUNCTIONS ########
 
-def load_final_model(bucket, filepath, final_model_name):
-    """
-    Gets trained and finetuned final model based on target S3 bucket and file path
-    
-    Args: 
-        bucket (str): Name of S3 bucket.
-        filepath (str): Filepath of trained final model.
-        final_model_name (str): File name of trained final model.
-            
-    Returns:
-        model: Trained final model.
-        
-    """
-    s3client = boto3.client('s3')
-    s3client.download_file(
-        Bucket = bucket,
-        Key = filepath,
-        Filename = '/tmp/'+final_model_name
-    )
-    
-    tar_file = tarfile.open('/tmp/'+final_model_name)
-    tar_file.extractall('/tmp/model_folder')
-    tar_file.close()
-    
-    final_model = joblib.load('/tmp/model_folder/logReg_F1_model.joblib')
-    
-    return final_model     
+######## FINAL MODEL LOADING & PREDICTION FUNCTIONS ########
 
 def get_feature_dict(containment_scores, lcm_score, direct_avg_score, paraphrase_avg_score):
     """
@@ -355,38 +337,40 @@ def get_flag_score_prediction(final_model_name, feature_df):
         plagiarism_flag (boolean): 1 means the document is plagiarised, vice-versa.
         plagiarism_scoreability (float): Probability of the document being flagged as plagiarised.
     """
-    final_model = load_final_model(s3_bucket, s3_folderpath+final_model_name, final_model_name)
+    final_model = load_model(final_model_name)
 
     plagiarism_flag = final_model.predict(feature_df)[0]
     plagiarism_score = final_model.predict_proba(feature_df)[:,1][0]
     
     return plagiarism_flag, plagiarism_score
 
-######## FINAL OUTPUT GENERATION FUNCTIONS ########
 
-def one_one_matching(s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_name, input_doc, input_name):
+######## GENERIC MATCHING OUTPUT GENERATION FUNCTIONS ########
+
+def one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_doc_name, input_doc):
     """
     One-to-one matching function - given 2 documents, compare and return the plagiarised flag, score and plagiarised texts.
 
     Args:
-        s3_bucket (str): Name of S3 bucket.
-        s3_folderpath (str): Filepath of trained models.
         sentbert_model_name (str): Filepath of trained Sentence Transformer model.
-        final_model_name (str): Filepath of trained final model.
         ngrams_lst (lst): List of selected n_grams used to generate containment scores.
         source_doc (str): Source document.
+        source_doc_name (str): Name of source document.
         input_doc (str): Input document.
-        input_name (str): Name of input document.
 
     Returns:
-        output_dict (dict): Dictionary containing comparison results (name of input document, plagiarised flag, score and texts).
+        plagiarised_text (list): Concatenation of direct matching and paraphrasing texts, sorted by starting character index. 
+        direct_avg_score (float): Average direct matching cosine similarity score over number of sentences in input document.
+        paraphrase_avg_score (float): Average paraphrase cosine similarity score over number of sentences in input document.
+        containment_scores (dict): Containment scores for each ngram between the source and input document.
+        lcm_score (flat): Longest common subsequence score between the source and input document.
     """
     input_text_lst = get_preprocessed_sent(input_doc)
-    direct_output, match_lst = get_matching_texts(input_text_lst, source_doc)
+    direct_output, match_lst = get_matching_texts(input_text_lst, source_doc, source_doc_name)
     
     nonmatch_lst = get_non_direct_texts(input_text_lst, match_lst)
-    sentence_trans_model = load_sentbert_model(s3_bucket, s3_folderpath+sentbert_model_name, sentbert_model_name)
-    paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, 0.7)
+    sentence_trans_model = load_model(sentbert_model_name)
+    paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, source_doc_name, 0.7)
 
     plagiarised_text = direct_output + paraphrase_output
     plagiarised_text = sorted(plagiarised_text, key=lambda d: d['start_char_index'])
@@ -399,38 +383,104 @@ def one_one_matching(s3_bucket, s3_folderpath, sentbert_model_name, final_model_
     containment_scores = get_containment_scores(input_doc, source_doc, ngrams_lst)
     lcm_score = get_lcm_score(input_doc, source_doc)
     
+    return plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score
+
+def one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_doc_name, input_doc, input_doc_name):
+    """
+    Generates the plagiarism flag and score for a input and source document pair.
+
+    Args:  
+        sentbert_model_name (str): Filepath of trained Sentence Transformer model.
+        final_model_name (str): Filepath of trained final model.
+        ngrams_lst (lst): List of selected n_grams used to generate containment scores.
+        source_doc (str): Source document.
+        source_doc_name (str): Name of source document.
+        input_doc (str): Input document.
+        input_doc_name (str): Name of input document.
+
+    Returns:
+        output_dict (dict): Dictionary containing comparison results (name of input document, plagiarised flag, score and texts).
+    """
+
+    plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_doc_name, input_doc)
+
     feature_df = get_feature_dict(containment_scores, lcm_score, direct_avg_score, paraphrase_avg_score)
     
     plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
     
-    output_dict = {'input_doc_name': input_name,
-                   'source_doc_name': source_name,
+    output_dict = {'input_doc_name': input_doc_name,
                    'plagiarism_flag': plagiarism_flag, 
                    'plagiarism_score': plagiarism_score,
                    'plagiarised_text': plagiarised_text}
-    
+
     return output_dict
 
-def get_matching_output(s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_name):
-    """
-    One-to-many strings matching function - given 1 document and a list of documents, compare and return the plagiarised flag, score and plagiarised texts.
 
+######## 1-1 MATCHING FINAL OUTPUT GENERATION FUNCTIONS ########
+
+def get_one_one_matching_output(sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_doc_name):
+    """
+    One-to-one matching function - given 2 documents, compare and return the plagiarised flag, score and plagiarised texts.
     Args:
-        s3_bucket (str): Name of S3 bucket.
-        s3_folderpath (str): Filepath of trained models.
         sentbert_model_name (str): Filepath of trained Sentence Transformer model.
         final_model_name (str): Filepath of trained final model.
         ngrams_lst (lst): List of selected n_grams used to generate containment scores.
         source_docs (list[dict]): List of dictionaries containing source documents & source document name. E.g. [{'source_doc_name': test1, 'source_doc': teststr}]
         input_doc (str): Input document.
-        input_name (str): Name of input document.
-
+        input_doc_name (str): Name of input document.
+    
     Returns:
-        output_lst (list[dict]): List of dictionaries containing comparison results (name of input document, plagiarised flag, score and texts).
+        output_lst (list[dict]): List of dictionaries containing all comparison results (name of input document, plagiarised flag, score and texts).
     """
     output_lst = []
     for i in source_docs:
-        temp_dict = one_one_matching(s3_bucket, s3_folderpath, sentbert_model_name, final_model_name, ngrams_lst, i['source_doc'], i['source_doc_name'], input_doc, input_name)
+        temp_dict = one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, i['source_doc'], i['source_doc_name'], input_doc, input_doc_name)
         output_lst.append(temp_dict)
     
     return output_lst
+
+
+######## 1-MANY MATCHING FINAL OUTPUT GENERATION FUNCTIONS ########
+
+def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_doc_name):
+    """
+    One-to-many matching function - given 1 input document & >1 source documents, compare and return the plagiarised flag, score and plagiarised texts.
+    Args:
+        sentbert_model_name (str): Filepath of trained Sentence Transformer model.
+        final_model_name (str): Filepath of trained final model.
+        ngrams_lst (lst): List of selected n_grams used to generate containment scores.
+        source_docs (list[dict]): List of dictionaries containing source documents & source document name. E.g. [{'source_doc_name': test1, 'source_doc': teststr}]
+        input_doc (str): Input document.
+        input_doc_name (str): Name of input document.
+    
+    Returns:
+        output_dict (dict): Dictionary containing all comparison results, averaged across all source_documents (name of input document, plagiarised flag, score and texts).
+    """
+
+    plagiarised_text_lst = []
+    direct_avg_score_lst = []
+    paraphrase_avg_score_lst = []
+    containment_scores_lst = []
+    lcm_score_lst = []
+
+    for i in source_docs:
+        plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, i['source_doc'], i['source_doc_name'], input_doc)
+                
+        plagiarised_text_lst = plagiarised_text_lst + plagiarised_text
+        direct_avg_score_lst.append(direct_avg_score)
+        paraphrase_avg_score_lst.append(paraphrase_avg_score)
+        containment_scores_lst.append(containment_scores)
+        lcm_score_lst.append(lcm_score)
+
+    avg_containment_scores = get_n_avg_containment_scores(containment_scores_lst, ngrams_lst)
+
+    feature_df = get_feature_dict(avg_containment_scores, mean(lcm_score_lst), mean(direct_avg_score_lst), mean(paraphrase_avg_score_lst))
+
+    plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
+
+    output_dict = {'input_doc_name': input_doc_name,
+                    'plagiarism_flag': plagiarism_flag, 
+                    'plagiarism_score': plagiarism_score,
+                    'plagiarised_text': plagiarised_text_lst}
+    
+    return output_dict
