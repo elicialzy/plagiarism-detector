@@ -3,7 +3,9 @@ from compiled_functions import get_one_one_matching_output, get_one_many_matchin
 
 print('Loading function')
 
-sentbert_model_name = 'models/trained_bert_model.gz'
+s3_bucket = 'nus-sambaash-data'
+s3_training_data_filepath = 'plagiarism-detector/webis_db.csv'
+sentbert_model_name = 'models/trained_bert_model.joblib'
 final_model_name = 'models/final_model.joblib'
 ngrams_lst = [1,4,5]
 

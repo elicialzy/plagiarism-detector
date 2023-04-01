@@ -15,28 +15,14 @@ from textmatcher import Matcher, Text
 
 ######## CONFIGURATIONS ########
 
-sentbert_model_name = 'models/trained_bert_model.gz'
+s3_bucket = 'nus-sambaash-data'
+s3_training_data_filepath = 'plagiarism-detector/webis_db.csv'
+sentbert_model_name = 'models/trained_bert_model.joblib'
 final_model_name = 'models/final_model.joblib'
 ngrams_lst = [1,4,5]
 
 
 ######## DIRECT MATCHING FUNCTIONS ########
-
-def read_s3_df(bucket, filepath):
-    """
-    Returns DataFrame of CSV file downloaded from S3 bucket.
-
-    Args:
-        bucket (str): Name of S3 bucket.
-        filepath (str): Filepath of CSV file in S3.
-
-    Returns:
-        df (pd.DataFrame): Dataframe of CSV file downloaded.
-    """
-    data_location = 's3://{}/{}'.format(bucket, filepath)
-    df = pd.read_csv(data_location, index_col=[0])
-    
-    return df
 
 def get_preprocessed_sent(input_doc):
     """
@@ -369,27 +355,19 @@ def one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_d
     direct_output, match_lst = get_matching_texts(input_text_lst, source_doc, source_doc_name)
     
     nonmatch_lst = get_non_direct_texts(input_text_lst, match_lst)
-    # sentence_trans_model = load_model(sentbert_model_name)
-    # paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, source_doc_name, 0.7)
+    sentence_trans_model = load_model(sentbert_model_name)
+    paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, source_doc_name, 0.7)
 
     plagiarised_text = direct_output + paraphrase_output
     plagiarised_text = sorted(plagiarised_text, key=lambda d: d['start_char_index'])
-    print(f"plagiarised_text generated! {plagiarised_text}")
 
     new_direct_output, new_paraphrase_output = modified_output_lists(direct_output, paraphrase_output, 0.95)
-    print("new_direct_output & new_paraphrase_output generated!")
     
     direct_avg_score = get_avg_score(input_text_lst, new_direct_output)
-    print(f"direct_avg_score generated!: {direct_avg_score}")
-
     paraphrase_avg_score = get_avg_score(input_text_lst, new_paraphrase_output)
-    print(f"paraphrase_avg_score generated!: {paraphrase_avg_score}")
     
     containment_scores = get_containment_scores(input_doc, source_doc, ngrams_lst)
-    print(f"containment_scores generated!: {containment_scores}")
-
     lcm_score = get_lcm_score(input_doc, source_doc)
-    print(f"lcm_score generated!: {lcm_score}")
 
     return plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score
 
@@ -413,10 +391,8 @@ def one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_ls
     plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_doc_name, input_doc)
 
     feature_df = get_feature_dict(containment_scores, lcm_score, direct_avg_score, paraphrase_avg_score)
-    print(f"feature_df generated!: {feature_df}")
     
     plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
-    print(f"plagiarism_flag & plagiarism_score generated!: {plagiarism_flag} & {plagiarism_score}")
     
     output_dict = {'input_doc_name': input_doc_name,
                    'plagiarism_flag': plagiarism_flag, 
@@ -444,9 +420,15 @@ def get_one_one_matching_output(sentbert_model_name, final_model_name, ngrams_ls
     """
     output_lst = []
     for i in source_docs:
-        temp_dict = one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, i['source_doc'], i['source_doc_name'], input_doc, input_doc_name)
+
+        source_doc = i['source_doc']
+        source_doc_name = i['source_doc_name']
+
+        temp_dict = one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_doc_name, input_doc, input_doc_name)
         output_lst.append(temp_dict)
-    
+
+        add_input_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath)
+
     return output_lst
 
 
@@ -488,9 +470,79 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
 
     plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
 
+    add_input_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath)
+
     output_dict = {'input_doc_name': input_doc_name,
                     'plagiarism_flag': plagiarism_flag, 
                     'plagiarism_score': plagiarism_score,
                     'plagiarised_text': plagiarised_text_lst}
     
     return output_dict
+
+######## ADD NEW INPUT TO TRAINING DATAFILE ########
+
+def read_s3_df(s3_bucket, s3_filepath):
+    """
+    Returns DataFrame of CSV file downloaded from S3 bucket.
+
+    Args:
+        s3_bucket (str): Name of S3 bucket.
+        s3_filepath (str): Filepath of CSV file in S3.
+
+    Returns:
+        df (pd.DataFrame): Dataframe of CSV file downloaded.
+    """
+    data_location = 's3://{}/{}'.format(s3_bucket, s3_filepath)
+    df = pd.read_csv(data_location, index_col=[0])
+    
+    return df
+
+def upload_to_s3(local_file, s3_bucket, s3_filepath):
+    """
+    Uploads file back to S3 bucket.
+
+    Args:
+        local_file (str): Local filepath of file.
+        s3_bucket (str): Name of S3 bucket.
+        s3_filepath (str): Filepath of file in S3.
+
+    Returns:
+        s3_url (str): S3 URL of file uploaded.
+    """
+    s3_client = boto3.client("s3")
+    s3_url = s3_client.upload_file(local_file, s3_bucket, s3_filepath)
+
+    return s3_url
+
+def add_input_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath):
+    """
+    Adds the new input and source documents back to training data file in S3 bucket.
+
+    Args:
+        source_docs (list[dict]): A list of dictionaries containing the input and source documents.
+        input_doc (str): Input document.
+        input_doc_name (str): Name of input document.
+        s3_bucket (str): Name of S3 bucket.
+        s3_filepath (str): Filepath of file in S3.
+    """
+    training_df = read_s3_df(s3_bucket, s3_training_data_filepath)
+    
+    for dict in source_docs:
+        data = {
+            "file_num": dict['source_doc_name'],
+            "text": dict['source_doc']
+        }
+        training_df = training_df.append(data, ignore_index=True) 
+
+    data = {
+        "file_num": input_doc_name,
+        "text": input_doc
+    }
+    training_df = training_df.append(data, ignore_index=True) 
+    
+    training_df.to_csv('/tmp/webis_db.csv', index=False)
+    upload_to_s3('/tmp/webis_db.csv', s3_bucket, s3_training_data_filepath)
+
+    return None
+
+

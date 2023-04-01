@@ -1,5 +1,7 @@
 boto3==1.26.99
+fsspec==2023.3.0
 nltk==3.8.1
 pandas==1.5.3
+s3fs==2023.3.0
 scikit-learn==1.2.2
 sentence-transformers==2.2.2
