@@ -369,20 +369,28 @@ def one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_d
     direct_output, match_lst = get_matching_texts(input_text_lst, source_doc, source_doc_name)
     
     nonmatch_lst = get_non_direct_texts(input_text_lst, match_lst)
-    sentence_trans_model = load_model(sentbert_model_name)
-    paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, source_doc_name, 0.7)
+    # sentence_trans_model = load_model(sentbert_model_name)
+    # paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, source_doc_name, 0.7)
 
     plagiarised_text = direct_output + paraphrase_output
     plagiarised_text = sorted(plagiarised_text, key=lambda d: d['start_char_index'])
+    print(f"plagiarised_text generated! {plagiarised_text}")
 
     new_direct_output, new_paraphrase_output = modified_output_lists(direct_output, paraphrase_output, 0.95)
+    print("new_direct_output & new_paraphrase_output generated!")
     
     direct_avg_score = get_avg_score(input_text_lst, new_direct_output)
+    print(f"direct_avg_score generated!: {direct_avg_score}")
+
     paraphrase_avg_score = get_avg_score(input_text_lst, new_paraphrase_output)
+    print(f"paraphrase_avg_score generated!: {paraphrase_avg_score}")
     
     containment_scores = get_containment_scores(input_doc, source_doc, ngrams_lst)
+    print(f"containment_scores generated!: {containment_scores}")
+
     lcm_score = get_lcm_score(input_doc, source_doc)
-    
+    print(f"lcm_score generated!: {lcm_score}")
+
     return plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score
 
 def one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_doc_name, input_doc, input_doc_name):
@@ -405,8 +413,10 @@ def one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_ls
     plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_doc_name, input_doc)
 
     feature_df = get_feature_dict(containment_scores, lcm_score, direct_avg_score, paraphrase_avg_score)
+    print(f"feature_df generated!: {feature_df}")
     
     plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
+    print(f"plagiarism_flag & plagiarism_score generated!: {plagiarism_flag} & {plagiarism_score}")
     
     output_dict = {'input_doc_name': input_doc_name,
                    'plagiarism_flag': plagiarism_flag, 
