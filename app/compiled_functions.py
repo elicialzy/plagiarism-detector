@@ -1,3 +1,6 @@
+import os
+os.environ['TRANSFORMERS_CACHE'] = '/tmp/.cache/huggingface/hub'
+
 import difflib
 import json
 import re
@@ -15,7 +18,7 @@ from textmatcher import Matcher, Text
 
 ######## CONFIGURATIONS ########
 
-s3_bucket = 'nus-sambaash-data'
+s3_bucket = 'nus-sambaash-2'
 s3_training_data_filepath = 'plagiarism-detector/webis_db.csv'
 sentbert_model_name = 'models/trained_bert_model.joblib'
 final_model_name = 'models/final_model.joblib'

@@ -3,7 +3,7 @@ from compiled_functions import get_one_one_matching_output, get_one_many_matchin
 
 print('Loading function')
 
-s3_bucket = 'nus-sambaash-data'
+s3_bucket = 'nus-sambaash-2'
 s3_training_data_filepath = 'plagiarism-detector/webis_db.csv'
 sentbert_model_name = 'models/trained_bert_model.joblib'
 final_model_name = 'models/final_model.joblib'
@@ -22,25 +22,25 @@ def lambda_handler(event, context):
             response = get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_doc_name)
 
         response_object = {
-            'status_code': 200,
+            'statusCode': 200,
             'success': True,
             'body': json.loads(json.dumps(response, default=str))
         }
 
     except KeyError as e:
         response_object = {
-            'status_code': 400,
+            'statusCode': 400,
             'success': False,
-            'body': "Missing input keys, please check your API input."
+            'body': f"Missing input keys, please check your API input. {str(e)}"
         }
         
-    except Exception as e:
-        response_object = {
-            'status_code': 500,
-            'success': False,
-            'body': str(e)
+    # except Exception as e:
+    #     response_object = {
+    #         'statusCode': 500,
+    #         'success': False,
+    #         'body': str(e)
 
-        }
+    #     }
 
 
     return response_object
