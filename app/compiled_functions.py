@@ -223,10 +223,20 @@ def get_paraphrase_predictions(model, nonmatch_lst, source_doc, source_doc_name,
 ######## FEATURE GENERATION FUNCTIONS ########
 
 def get_vocab_counts(input_doc, source_doc, n):
-    '''
+    """
     Using CountVectorizer, create vocab based on both texts.
     Count number of occurence of each ngram
-    '''
+
+    Args:
+        input_doc (str): Current document
+        source_doc (str): Document to compare to
+        n (int): Number of n-gram calculated
+
+    Returns:
+        vocab (dict) : Vocabulary (i.e. unique tokens in the 2 doc and their corresponding indices in the sparse matrix)
+        counts.toarray() (arr) : 2-D NumPy array of integers where each row represents the token counts for a document,
+    """
+
     counts_ngram = CountVectorizer(analyzer='word', ngram_range=(n, n))
     vocab = counts_ngram.fit([input_doc, source_doc]).vocabulary_
     counts = counts_ngram.fit_transform([input_doc, source_doc])
@@ -235,11 +245,19 @@ def get_vocab_counts(input_doc, source_doc, n):
 
 # calculate ngram containment for each text/original file
 def calc_containment(input_doc, source_doc, n):
-    '''
-    calculates the containment between a given text and its original text
+    """
+    Calculates the containment between a given text and its original text
     This creates a count of ngrams (of size n) then calculates the containment by finding the ngram count for a text file
     and its associated original tezt -> then calculates the normalised intersection
-    '''
+
+    Args:
+        input_doc (str): Current document
+        source_doc (str): Document to compare to
+        n (int): Number of n-gram calculated
+
+    Returns:
+        intersection / count_ngram (float): Containment similarity score between the 2 documents
+    """
     # create vocab and count occurence of each ngram
     vocab, ngram_counts = get_vocab_counts(input_doc, source_doc, n)
     # calc containment
@@ -250,6 +268,17 @@ def calc_containment(input_doc, source_doc, n):
     return intersection / count_ngram
 
 def get_containment_scores(input_doc, source_doc, ngrams_lst):
+    """
+    Generates containment scores for all n-values in ngrams_lst for each input_doc
+
+    Args:
+        input_doc (str): Current document
+        source_doc (str): Document to compare to
+        ngrams_lst (list[int]): List of n integers of n-gram containment values to generate
+
+    Returns:
+        containment_scores (dict): Key represents current n-gram, values are containment score for that input_doc
+    """
     containment_scores = {}
     
     for ngram in ngrams_lst:
@@ -280,6 +309,17 @@ def get_n_avg_containment_scores(containment_scores_lst, ngrams_lst):
 
 
 def get_lcm_score(input_doc, source_doc):
+    """
+    Calculates the ratio of the longest common subsequence 
+    and the length of the longer text
+
+    Args:
+        input_doc (str): Current document
+        source_doc (str): Document to compare to
+
+    Returns:
+        lcs_ratio (float): LCS score for input_doc and source_docs
+    """
     max_len = max(len(input_doc), len(source_doc))
     matcher = difflib.SequenceMatcher(None, input_doc, source_doc)
     
