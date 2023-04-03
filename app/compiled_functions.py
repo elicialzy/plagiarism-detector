@@ -163,7 +163,15 @@ def get_avg_score(input_text_lst, output_lst):
 ######## PARAPHRASED MATCHING FUNCTIONS ########
 
 def load_model(model_name):
-    ""
+    """
+    Load trained model from S3 bucket.
+
+    Args:
+        model_name (str): Name of trained model.
+
+    Returns:
+        model (SentenceTransformers or LogisticRegression): Trained model.
+    """
     model = joblib.load(model_name)
     return model
 
@@ -228,16 +236,16 @@ def get_paraphrase_predictions(model, nonmatch_lst, source_doc, source_doc_name,
 def get_vocab_counts(input_doc, source_doc, n):
     """
     Using CountVectorizer, create vocab based on both texts.
-    Count number of occurence of each ngram
+    Count number of occurence of each ngram.
 
     Args:
-        input_doc (str): Current document
-        source_doc (str): Document to compare to
-        n (int): Number of n-gram calculated
+        input_doc (str): Input document.
+        source_doc (str): Source document.
+        n (int): Number of n-gram calculated.
 
     Returns:
-        vocab (dict) : Vocabulary (i.e. unique tokens in the 2 doc and their corresponding indices in the sparse matrix)
-        counts.toarray() (arr) : 2-D NumPy array of integers where each row represents the token counts for a document,
+        vocab (dict) : Vocabulary (i.e. unique tokens in the 2 doc and their corresponding indices in the sparse matrix).
+        counts.toarray() (arr) : Array of integers where each row represents the token counts for a document.
     """
 
     counts_ngram = CountVectorizer(analyzer='word', ngram_range=(n, n))
@@ -249,17 +257,16 @@ def get_vocab_counts(input_doc, source_doc, n):
 # calculate ngram containment for each text/original file
 def calc_containment(input_doc, source_doc, n):
     """
-    Calculates the containment between a given text and its original text
-    This creates a count of ngrams (of size n) then calculates the containment by finding the ngram count for a text file
-    and its associated original tezt -> then calculates the normalised intersection
+    Calculates the containment between a given text and its original text.
+    This creates a count of ngrams (of size n) then calculates the containment by finding the ngram count for a text file and its associated original text -> then calculates the normalised intersection.
 
     Args:
-        input_doc (str): Current document
-        source_doc (str): Document to compare to
-        n (int): Number of n-gram calculated
+        input_doc (str): Input document.
+        source_doc (str): Source document.
+        n (int): Number of n-gram calculated.
 
     Returns:
-        intersection / count_ngram (float): Containment similarity score between the 2 documents
+        intersection / count_ngram (float): Containment similarity score between the 2 documents.
     """
     # create vocab and count occurence of each ngram
     vocab, ngram_counts = get_vocab_counts(input_doc, source_doc, n)
@@ -272,15 +279,15 @@ def calc_containment(input_doc, source_doc, n):
 
 def get_containment_scores(input_doc, source_doc, ngrams_lst):
     """
-    Generates containment scores for all n-values in ngrams_lst for each input_doc
+    Generates containment scores for all n-values in ngrams_lst for each input_doc.
 
     Args:
-        input_doc (str): Current document
-        source_doc (str): Document to compare to
-        ngrams_lst (list[int]): List of n integers of n-gram containment values to generate
+        input_doc (str): Input document.
+        source_doc (str): Source document.
+        ngrams_lst (list[int]): List of n integers of n-gram containment values to generate.
 
     Returns:
-        containment_scores (dict): Key represents current n-gram, values are containment score for that input_doc
+        containment_scores (dict): Key represents current n-gram, values are containment score for that input_doc.
     """
     containment_scores = {}
     
@@ -317,11 +324,11 @@ def get_lcm_score(input_doc, source_doc):
     and the length of the longer text
 
     Args:
-        input_doc (str): Current document
-        source_doc (str): Document to compare to
+        input_doc (str): Input document.
+        source_doc (str): Source document.
 
     Returns:
-        lcs_ratio (float): LCS score for input_doc and source_docs
+        lcs_ratio (float): LCS score for input_doc and source_docs.
     """
     max_len = max(len(input_doc), len(source_doc))
     matcher = difflib.SequenceMatcher(None, input_doc, source_doc)
