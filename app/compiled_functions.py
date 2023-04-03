@@ -535,8 +535,9 @@ def read_s3_df(s3_bucket, s3_filepath):
     Returns:
         df (pd.DataFrame): Dataframe of CSV file downloaded.
     """
-    data_location = 's3://{}/{}'.format(s3_bucket, s3_filepath)
-    df = pd.read_csv(data_location, index_col=[0])
+    s3_client = boto3.client('s3')
+    obj = s3_client.get_object(Bucket=s3_bucket, Key= s3_filepath)
+    df = pd.read_csv(obj['Body'])
     
     return df
 
