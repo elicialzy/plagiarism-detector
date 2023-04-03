@@ -258,9 +258,6 @@ def calc_containment(input_doc, source_doc, n):
     Returns:
         intersection / count_ngram (float): Containment similarity score between the 2 documents
     """
-    '''
-    
-    '''
     # create vocab and count occurence of each ngram
     vocab, ngram_counts = get_vocab_counts(input_doc, source_doc, n)
     # calc containment
