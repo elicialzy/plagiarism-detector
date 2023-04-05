@@ -5,7 +5,7 @@ This directory contains the necessary codes and instructions to set up an automa
 * custom-bert
 
 ## Directory
-[a relative link](assets/) - contains necessary datasets for testing the continuous learning pipeline
+[assets/](assets/) - contains necessary datasets for testing the continuous learning pipeline
 [a relative link](lambda-custom-bert/) - contains scripts for deploying lambda function to trigger SageMaker Training Job for our custom BERT model
 [a relative link](lambda-custom-ml/) - contains scripts for deploying lambda function to trigger SageMaker Training Job for our custom logistic regression model
 [a relative link](train-custom-bert/) - contains scripts for dockerizing BERT model training and uploading it onto ECR
