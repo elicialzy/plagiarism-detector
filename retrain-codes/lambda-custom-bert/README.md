@@ -1,5 +1,5 @@
 ### Custom Fields (need to insert)
-[a relative link](serverless.yml)
+[serverless.yml](serverless.yml)
 line 19: SageMaker Excution Role
 line 25: Name of SageMaker Training Job to copy from 
 line 26: Prefix of subsequent training jobs
