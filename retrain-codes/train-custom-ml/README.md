@@ -1,19 +1,19 @@
 ### Custom Fields (don't need to change for testing)
 [container/codes/train](container/codes/train)
 
-* [line 56](https://github.com/elicialzy/plagiarism-detector/blob/4294194b6c587bb9561bd5c43b9d0ac91b981a6c/retrain-codes/train-custom-ml/container/codes/train#L56) - BERTMODEL_BUCKET: bucket where the pre-trained custom sentence transformer model resides
+* [line 56](https://github.com/elicialzy/plagiarism-detector/blob/4294194b6c587bb9561bd5c43b9d0ac91b981a6c/retrain-codes/train-custom-ml/container/codes/train#L56) - `BERTMODEL_BUCKET`: bucket where the pre-trained custom sentence transformer model resides
 
-* [line 57](https://github.com/elicialzy/plagiarism-detector/blob/4294194b6c587bb9561bd5c43b9d0ac91b981a6c/retrain-codes/train-custom-ml/container/codes/train#L57) - BERTMODEL_PATH: path where the pre-trained custom sentence transformer model resides
+* [line 57](https://github.com/elicialzy/plagiarism-detector/blob/4294194b6c587bb9561bd5c43b9d0ac91b981a6c/retrain-codes/train-custom-ml/container/codes/train#L57) - `BERTMODEL_PATH`: path where the pre-trained custom sentence transformer model resides
 
 ### Prerequisites (which have already been done)
 
-S3 bucket with training data in nus-sambaash/plagiarism-detector/data/train.csv
-S3 bucket with pre-trained sentence bert model in nus-sambaash/plagiarism-detector/models/trained_bert_model.joblib
+S3 bucket with training data in `nus-sambaash/plagiarism-detector/data/train.csv`
+S3 bucket with pre-trained sentence bert model in `nus-sambaash/plagiarism-detector/models/trained_bert_model.joblib`
 
 ### Instructions - 
 
 1. Upload this folder onto an Amazon Sagemaker Notebook Instance
-2. Create ECR repository with name 'custom-ml'
+2. Create ECR repository with name `custom-ml`
 3. Add permissions to ECR repository to allow SageMaker to upload images to ECR
 ```
 "Action": [
@@ -26,7 +26,7 @@ S3 bucket with pre-trained sentence bert model in nus-sambaash/plagiarism-detect
   "ecr:UploadLayerPart"
 ]
 ```
-4. Run all cells in run_scripts.ipynb
+4. Run all cells in [run_scripts.ipynb](run_scripts.ipynb)
 5. Create Training Job
 ```
 Job Name : custom-ml-base
