@@ -2,9 +2,7 @@
 [serverless.yml](serverless.yml)
 
 * [line 19](https://github.com/elicialzy/plagiarism-detector/blob/367cbe30581ea3a5105de29ff0e7538a9cf841ab/retrain-codes/lambda-custom-bert/serverless.yml#L19): SageMaker Execution Role
-
 * [line 25](https://github.com/elicialzy/plagiarism-detector/blob/367cbe30581ea3a5105de29ff0e7538a9cf841ab/retrain-codes/lambda-custom-bert/serverless.yml#L25): Name of SageMaker Training Job to copy from 
-
 * [line 26](https://github.com/elicialzy/plagiarism-detector/blob/367cbe30581ea3a5105de29ff0e7538a9cf841ab/retrain-codes/lambda-custom-bert/serverless.yml#L26): Prefix of subsequent training jobs
 
 ### Prerequisites
