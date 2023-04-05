@@ -16,13 +16,13 @@ provider:
       Action:
         - iam:PassRole
       # Don't forget to update the account number and the name of the SageMaker service role
-      Resource: ""
+      Resource: "arn:aws:iam::"
 
 functions:
   main:
     handler: handler.main
     environment:
-      training_job_name: "" # name of training job to copy from eg "training-ml-1"
-      training_job_prefix: "" # prefixes of all copied training jobs eg. "training-ml-"
+      training_job_name: "custom-ml-base" # name of training job to copy from eg "custom-ml-base"
+      training_job_prefix: "" # prefixes of all copied training jobs eg. "custom-ml-"
       instance_type: "ml.m5.large"
       instance_count: "1"
