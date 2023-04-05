@@ -28,4 +28,4 @@ Input data configuration > training > Data source : S3
 Input data configuration > training > S3 location : 's3://nus-sambaash/plagiarism-detector/data/train.csv'
 Output data configuration : 's3://nus-sambaash/plagiarism-detector/training-jobs'
 ```
-6. The trained model from this training job should reside in s3://nus-sambaash/plagiarism-detector/training-jobs/custom-bert-base/output/model.tar.gz'
+6. The trained model from this training job should reside in `s3://nus-sambaash/plagiarism-detector/training-jobs/custom-bert-base/output/model.tar.gz`
