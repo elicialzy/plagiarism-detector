@@ -17,7 +17,7 @@ line 26: Prefix of subsequent training jobs
   * npm
     ```sh
     aws configure
-  ```
+    ```
 
 * Previous manually created SageMaker Training Job
 * SNS trigger upon update of S3 training data
