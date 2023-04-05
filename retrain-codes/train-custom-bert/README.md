@@ -18,7 +18,7 @@ S3 bucket with training data in nus-sambaash/plagiarism-detector/data/train.csv
   "ecr:UploadLayerPart"
 ]
 ```
-4. Run all cells in run_scripts.ipynb
+4. Run all cells in [run_scripts.ipynb](/run_scripts.ipynb)
 5. Create Training Job
 ```
 Job Name : custom-bert-base
