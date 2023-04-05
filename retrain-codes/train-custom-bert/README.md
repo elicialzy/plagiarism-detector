@@ -4,8 +4,8 @@ S3 bucket with training data in nus-sambaash/plagiarism-detector/data/train.csv
 
 ### Instructions - 
 
-1. Upload this folder onto an Amazon Sagemaker Notebook Instance
-2. Create ECR repository with name 'custom-sentence-transformer'
+1. Upload this folder onto an Amazon SageMaker Notebook Instance
+2. Create ECR repository with name `custom-sentence-transformer`
 3. Add permissions to ECR repository to allow SageMaker to upload images to ECR
 ```
 "Action": [
@@ -18,8 +18,8 @@ S3 bucket with training data in nus-sambaash/plagiarism-detector/data/train.csv
   "ecr:UploadLayerPart"
 ]
 ```
-4. Run all cells in [run_scripts.ipynb](/run_scripts.ipynb)
-5. Create Training Job
+4. Run all cells in [run_scripts.ipynb](run_scripts.ipynb)
+5. Create SageMaker Training Job
 ```
 Job Name : custom-bert-base
 Algorithm options > Provide Container ECR path : <path-to-repository-created-above>
