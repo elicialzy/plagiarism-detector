@@ -16,8 +16,8 @@ This directory contains the necessary codes and instructions to set up an automa
 [train-custom-ml/](train-custom-ml/) - contains scripts for dockerizing logistic regression model training and uploading it onto ECR
 
 ## Steps
-1. Follow the steps in train-custom-bert
-2. Follow the steps in train-custom-ml
+1. Follow the steps in [train-custom-bert/README.md](train-custom-bert/README.md)
+2. Follow the steps in [train-custom-ml/README.md](train-custom-ml/README.md)
 3. Create AWS SNS Standard topic. No special configuration is needed.
 4. Create Event Notification for nus-sambaash bucket via nus-sambaash > Properties > Event Notification
 ```
@@ -26,8 +26,8 @@ Suffix : data/train.csv
 Event Types: select suitable events, for testing we need to select the s3:ObjectCreated:CompleteMultipartUpload event.
 Destination: select 'SNS Topic' and select the SNS topic created in Step 3
 ```
-5. Follow the steps in lambda-custom-bert
-6. Follow the steps in lambda-custom-ml
+5. Follow the steps in [lambda-custom-bert/README.md](lambda-custom-bert/README.md)
+6. Follow the steps in [lambda-custom-ml/README.md](lambda-custom-ml/README.md)
 7. For the lambda functions created in 5 and 6, add SNS trigger and select the SNS topic created in Step 3
 
 ## Test
