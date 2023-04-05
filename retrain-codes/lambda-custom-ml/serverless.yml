@@ -1,0 +1,28 @@
+service: mlretrainscheduler
+
+provider:
+  name: aws
+  stage: dev
+  region: ap-southeast-1
+  runtime: python3.9
+  memorySize: 128
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - sagemaker:DescribeTrainingJob
+        - sagemaker:CreateTrainingJob
+      Resource: "arn:aws:sagemaker:*:*:*"
+    - Effect: "Allow"
+      Action:
+        - iam:PassRole
+      # Don't forget to update the account number and the name of the SageMaker service role
+      Resource: ""
+
+functions:
+  main:
+    handler: handler.main
+    environment:
+      training_job_name: "" # name of training job to copy from eg "training-ml-1"
+      training_job_prefix: "" # prefixes of all copied training jobs eg. "training-ml-"
+      instance_type: "ml.m5.large"
+      instance_count: "1"
