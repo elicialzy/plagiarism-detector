@@ -19,7 +19,7 @@ This directory contains the necessary codes and instructions to set up an automa
 1. Follow the steps in [train-custom-bert/README.md](train-custom-bert/README.md)
 2. Follow the steps in [train-custom-ml/README.md](train-custom-ml/README.md)
 3. Create AWS SNS Standard topic. No special configuration is needed.
-4. Create Event Notification for nus-sambaash bucket via nus-sambaash > Properties > Event Notification
+4. Create Event Notification for nus-sambaash bucket via `nus-sambaash` > `Properties` > `Event Notification`
 ```
 Prefix : plagiarism-detector/
 Suffix : data/train.csv
@@ -31,7 +31,7 @@ Destination: select 'SNS Topic' and select the SNS topic created in Step 3
 7. For the lambda functions created in 5 and 6, add SNS trigger and select the SNS topic created in Step 3
 
 ## Test
-1. Replace s3://nus-sambaash/plagiarism-detector/data/train.csv with assets/df10.csv (a subset of the original dataset) to test if training jobs can be completed. Make sure to rename the file to 'train.csv' so that it can be identified by the training job.
+1. Replace `s3://nus-sambaash/plagiarism-detector/data/train.csv` with [assets/df10.csv]([assets/df10.csv]) (a subset of the original dataset) to test if training jobs can be completed. Make sure to rename the file to `train.csv` so that it can be identified by the training job.
 2. This upload of file should trigger S3 to send a notification to SNS and trigger the Lambda function to create a new training job.
-3. Post-testing: Replace s3://nus-sambaash/plagiarism-detector/data/train.csv dataset with assets/final_train.csv and rename the file to train.csv after testing
+3. Post-testing: Replace s3://nus-sambaash/plagiarism-detector/data/train.csv dataset with [assets/final_train.csv](assets/final_train.csv) and rename the file to `train.csv` after testing
 
