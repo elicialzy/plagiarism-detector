@@ -8,6 +8,7 @@
 ### Prerequisites (which have already been done)
 
 S3 bucket with training data in `nus-sambaash/plagiarism-detector/data/train.csv`
+
 S3 bucket with pre-trained sentence bert model in `nus-sambaash/plagiarism-detector/models/trained_bert_model.joblib`
 
 ### Instructions - 
