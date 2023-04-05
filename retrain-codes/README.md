@@ -24,7 +24,7 @@ This directory contains the necessary codes and instructions to set up an automa
 Prefix : plagiarism-detector/
 Suffix : data/train.csv
 Event Types: select suitable events, for testing we need to select the s3:ObjectCreated:CompleteMultipartUpload event.
-Destination - select 'SNS Topic' and select the SNS topic created in Step 3
+Destination: select 'SNS Topic' and select the SNS topic created in Step 3
 ```
 5. Follow the steps in lambda-custom-bert
 6. Follow the steps in lambda-custom-ml
