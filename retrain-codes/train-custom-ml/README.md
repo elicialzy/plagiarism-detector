@@ -1,5 +1,5 @@
 ### Custom Fields (don't need to change for testing)
-[a relative link](codes/train)
+[codes/train](codes/train)
 line 56 - BERTMODEL_BUCKET: bucket where the pre-trained custom sentence transformer model resides
 line 57 - BERTMODEL_PATH: path where the pre-trained custom sentence transformer model resides
 
