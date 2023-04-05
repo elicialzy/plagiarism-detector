@@ -1,0 +1,141 @@
+#!/usr/bin/env python
+
+# A sample training component that trains a simple scikit-learn decision tree model.
+# This implementation works in File mode and makes no assumptions about the input file names.
+# Input is specified as CSV with a data point in each row and the labels in the first column.
+
+from __future__ import print_function
+
+import json
+import os
+import pickle
+import joblib
+import sys
+import traceback
+
+import pandas as pd
+import numpy as np
+import re
+import nltk
+nltk.download('punkt')
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+import torch
+from sentence_transformers.datasets import DenoisingAutoEncoderDataset
+from torch.utils.data import DataLoader
+from sentence_transformers.losses import DenoisingAutoEncoderLoss
+
+# These are the paths to where SageMaker mounts interesting things in your container.
+
+prefix = '/opt/ml/'
+
+input_path = prefix + 'input/data'
+output_path = os.path.join(prefix, 'output')
+model_path = os.path.join(prefix, 'model')
+param_path = os.path.join(prefix, 'input/config/hyperparameters.json')
+
+# This algorithm has a single channel of input data called 'training'. Since we run in
+# File mode, the input files are copied to the directory specified here.
+channel_name='training'
+training_path = os.path.join(input_path, channel_name)
+
+## util functions
+
+def get_default_device():
+    """Picking GPU if available or else CPU"""
+    if torch.cuda.is_available():
+        return torch.device('cuda')
+    else:
+        return torch.device('cpu')
+
+def to_device(data, device):
+    """Move tensor(s) to chosen device"""
+    if isinstance(data, (list,tuple)):
+        return [to_device(x, device) for x in data]
+    return data.to(device, non_blocking=True)
+
+def preprocess(df):
+    '''
+    Returns a list of sentences to be passed into training model
+    
+    Args: 
+        df (pd.Dataframe): dataframe containing the source text id and the source text
+    
+    Returns:
+        train_df (list): list containing sentences to be passed into training model
+    '''
+    splitter = re.compile(r'\.\s?\n?')
+    train_df = []
+
+    for ind, row in df.iterrows():
+        sent = splitter.split(row['text_og'])
+        temp_df = []
+        start = 1
+        for s in sent:
+            a = s.replace('\n', ' ')
+            if len(a.split()) >= 10:
+                train_df.append(a)
+                
+    return train_df
+
+def train(train_data, model_id='sentence-transformers/all-MiniLM-L6-v2', gpu_device=None):
+    '''
+    Returns a trained Sentence Transformer model. Unsupervised learning method TSDAE is 
+    employed so that model better understands underlying vocabulary and semantics which are
+    specific to the corpus. 
+    
+    More information here: 
+    https://www.pinecone.io/learn/unsupervised-training-sentence-transformers/ 
+    
+    Args: 
+        train_data (list): list containing sentences to be passed into training model
+        model_id (str): string specifying the base sentence transformer model to retrieve from HuggingFace
+        gpu_device (obj): gpu object
+    
+    Returns:
+        model (obj): trained sentence transformer model
+    '''
+    train_data = DenoisingAutoEncoderDataset(train_df)
+    loader = DataLoader(train_data, batch_size=8, shuffle=True, drop_last=True)
+    model = SentenceTransformer(model_id)
+    loss = DenoisingAutoEncoderLoss(model, tie_encoder_decoder=True)
+    
+    if gpu_device:
+        to_device(model,gpu_device)
+        
+    model.fit(
+        train_objectives=[(loader, loss)],
+        epochs=1,
+        weight_decay=0,
+        scheduler='constantlr',
+        optimizer_params={'lr': 3e-5},
+        show_progress_bar=True
+    )
+    
+    return model
+
+if __name__ == '__main__':
+    try:
+        df = pd.read_csv(os.path.join(training_path,'train.csv'), index_col=[0])
+        train_df = preprocess(df)
+        device = get_default_device()
+        model = train(train_df, model_id='sentence-transformers/all-MiniLM-L6-v2', gpu_device=device)
+
+        model_output_path = os.path.join(model_path, 'trained_bert_model.joblib')
+        os.makedirs(os.path.dirname(model_output_path), exist_ok=True)
+        with open(model_output_path, 'wb') as f:
+            joblib.dump(model,f)
+
+        print('Training complete.')
+    except Exception as e:
+        # Write out an error file. This will be returned as the failureReason in the
+        # DescribeTrainingJob result.
+        trc = traceback.format_exc()
+        with open(os.path.join(output_path, 'failure'), 'w') as s:
+            s.write('Exception during training: ' + str(e) + '\n' + trc)
+        # Printing this causes the exception to be in the training job logs, as well.
+        print('Exception during training: ' + str(e) + '\n' + trc, file=sys.stderr)
+        # A non-zero exit code causes the training job to be marked as Failed.
+        sys.exit(255)
+        
+    sys.exit(0)

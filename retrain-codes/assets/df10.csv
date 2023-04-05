@@ -1,0 +1,428 @@
+,target,c_1,c_4,c_5,lcs_word,file_num,text_og,text_para,para_detect,para_detect_score,direct_detect,direct_detect_score
+0,1,0.8717948717948718,0.6266666666666667,0.5675675675675675,0.2104208416833667,1533,"THERE ARE FEWER CHILDREN, BUT THEY ARE STRONGER (the
+year 1920).
+
+THESE CHILDREN, WITH THEIR ORIGINALITY AND ESOTERIC TENDENCIES WILL BRING ON A REVOLUTION ON
+YOUR PLANET THAT WILL END BY DESTROYING YOUR THREADBARE DOGMATISM.  This tendency is evidenced
+by the recent failure of the Interchurch movement.  It has been the habit on your planet that
+you cannot accomplish anything without raising immense sums of money.
+
+It is not money that does the real work but rather PERSONAL SERVICE.
+","THERE ARE FEWER CHILDREN, BUT THEY ARE STRONGER (the year 1920).
+
+THESE CHILDREN, WITH THEIR ORIGINALITY AND ESOTERIC TENDENCIES WILL BRING ON A REVOLUTION ON YOUR PLANET THAT WILL END BY DESTROYING YOUR THREADBARE DOGMATISM. This tendency is evidenced via the modern failure of the Interchurch movement. It has been the mannerism onto your planet that you cannot conduct anything without elevating huge sums of money.
+
+It is not finance that does the actual profession but rather PERSONAL SERVICE.
+","[{'sentence': 'This tendency is evidenced via the modern failure of the Interchurch movement.', 'start_char_index': 224, 'end_char_index': 301, 'source_sentence': 'This tendency is evidenced by the recent failure of the Interchurch movement.', 'score': 0.932995}, {'sentence': 'It has been the mannerism onto your planet that you cannot conduct anything without elevating huge sums of money.It is not finance that does the actual profession but rather PERSONAL SERVICE.', 'start_char_index': 302, 'end_char_index': 492, 'source_sentence': 'It has been the habit on your planet that you cannot accomplish anything without raising immense sums of money.', 'score': 0.7606906}]",0.5645618836085001,"[{'sentence': 'THERE ARE FEWER CHILDREN, BUT THEY ARE STRONGER (the year 1920).THESE CHILDREN, WITH THEIR ORIGINALITY AND ESOTERIC TENDENCIES WILL BRING ON A REVOLUTION ON YOUR PLANET THAT WILL END BY DESTROYING YOUR THREADBARE DOGMATISM.', 'start_char_index': 1, 'end_char_index': 223, 'score': 0.9782816342899372}]",0.3260938780966457
+1,0,0.6724137931034483,0.0909090909090909,0.0555555555555555,0.0393374741200828,2008,"
+In De Generatione, Harvey provides a thorough and quite accurate account of the development
+of the chick embryo, which, in particular, clarified that the chalazae, those twisted skeins
+of albumen at either end of the yolk, were not, as generally believed, the developing embryo,
+and he demonstrated that the cicatricula (blastoderm) was the point of origin of the embryo.
+The famous frontispiece of the treatise shows Zeus holding an egg, from which issue animals
+of various kinds.
+","In De Generatione, a thorough and very accurate accounting of the development of the chicken emrbyo is provided by Harvey, particularly, the chalazae is clarified, the twisted skeins at either side of the yolk, were not, as typically beleived, the embryo developed.  The famous treatise shows zeus edd in hand, from this egg springs forth animals of various types.
+","[{'sentence': 'In De Generatione, a thorough and very accurate accounting of the development of the chicken emrbyo is provided by Harvey, particularly, the chalazae is clarified, the twisted skeins at either side of the yolk, were not, as typically beleived, the embryo developed.', 'start_char_index': 1, 'end_char_index': 265, 'source_sentence': ' In De Generatione, Harvey provides a thorough and quite accurate account of the development of the chick embryo, which, in particular, clarified that the chalazae, those twisted skeins of albumen at either end of the yolk, were not, as generally believed, the developing embryo, and he demonstrated that the cicatricula (blastoderm) was the point of origin of the embryo.', 'score': 0.8579525}, {'sentence': 'The famous treatise shows zeus edd in hand, from this egg springs forth animals of various types.', 'start_char_index': 266, 'end_char_index': 362, 'source_sentence': 'The famous frontispiece of the treatise shows Zeus holding an egg, from which issue animals of various kinds.', 'score': 0.81066966}]",0.8343110680580139,[],0.0
+2,1,1.0,0.9390243902439024,0.9183673469387756,0.0266940451745379,5507,"The ""black-faced Clifford,"" who sullied the glory which he
+acquired by his gallantry at the battle of Sandal, by murdering his youthful prisoner the Earl
+of Rutland, in cold blood, at the termination of it, has gained a passport to an odious immortality
+from the soaring genius of the bard of Avon. But his real fate is far more striking, both in
+a moral and in a poetical point of view, than that assigned to him by our great dramatist.
+On the evening before the battle of Towton Field, and after the termination of the skirmish
+which preceded it, an unknown archer shot him in the throat, as he was putting off his gorget,
+and so avenged the wretched victims, whose blood he had shed like water upon Wakefield Bridge.
+The vengeance of the Yorkists was not, however, satiated by the death of the Butcher, as Leland
+informs us that they called him:--for they attainted him, in the first year of the reign of
+Edward the Fourth, and granted his estates, a few years afterwards, to the Duke of Gloucester,
+who retained them in his iron grasp till he lost them with his crown and life at the battle
+of Bosworth. The history of his son is a romance ready made. One of the first acts of Henry
+the Seventh, after his accession to the throne, was to reverse the attainder which had been
+passed against his father; and immediately afterwards the young lord emerged from the hiding
+place, where he had been brought up in ignorance of his rank, and with the manners and education
+of a mere shepherd. His son, who was the first Earl of Cumberland, embittered the conclusion
+of his life, by embarking in a series of adventures, which, in spite of their profligacy, or
+rather in consequence of it, possess a very strong romantic interest. Finding that his father
+was either unwilling or unable to furnish him with funds to maintain his inordinate riot and
+luxury, he became the leader of a band of outlaws, and, by their agency, levied aids and benevolences
+upon the different travellers on the king's highway. A letter of the old lord, his father,
+which, by the by, is not the letter of an illiterate man, is still extant, in which he complains
+in very moving terms of his son's degeneracy and misconduct. The young scapegrace, wishing
+to make his father know from experience the inconvenience of being scantily supplied with money,
+enjoined his tenantry in Craven not to pay their rents, and beat one of them, Henry Popely,
+who ventured to disobey him, so severely with his own hand, that he lay for a long time in
+peril of death. He spoiled his father's houses, &c. ""feloniously took away his proper goods,""
+as the old lord quaintly observes, ""apparelling himself and his horse, all the time, in cloth
+of gold and goldsmith's work, more like a duke than a poor baron's son."" He likewise took a
+particular aversion to the religious orders, ""shamefully beating their tenants and servants,
+in such wise as some whole towns were fain to keep the churches both night and day, and durst
+not come at their own houses.""--Whilst engaged in these ignoble practices, less dissonant,
+however, to the manners of his age than to those of our's, he wooed, and won, and married,
+a daughter of the Percy of Northumberland; and it is conjectured, upon very plausible grounds,
+that his courtship and marriage with a lady of the highest rank under such disadvantages on
+his part, gave rise to the beautiful old ballad of the Nutbrown Maid.
+","The vengeance of the Yorkists was not, however, satiated by the death of the Butcher, as Leland informs us that they called him:--for they attainted him, in the first year of the reign of Edward the Fourth, and granted his estates, a few years afterwards, to the Duke of Gloucester
+
+
+
+
+
+The ""black-faced Clifford,"" who sullied the glory which he acquired by his gallantry at the battle of Sandal, by murdering his youthful prisoner the Earl of Rutland, in cold blood, at the termination of it, has gained a passport to an odious immortality from the soaring genius of the bard of Avon
+
+
+
+
+One of the first acts of Henry the Seventh, after his accession to the throne, was to reverse the attainder which had been passed against his father; and immediately afterwards the young lord emerged from the hiding place, where he had been brought up in ignorance of his rank, and with the manners and education 
+
+
+
+
+ Henry Popely, who ventured to disobey him, so severely with his own hand, that he lay for a long time in peril of death. He spoiled his father's houses
+
+
+
+ He likewise took a particular aversion to the religious orders, ""shamefully beating their tenants and servants, in such wise as some whole towns were fain to keep the churches both night and day, and durst not come at their own houses
+
+
+
+
+ he became the leader of a band of outlaws, and, by their agency, levied aids and benevolences upon the different travellers on the king's highway.
+",[],0.0,"[{'sentence': 'The vengeance of the Yorkists was not, however, satiated by the death of the Butcher, as Leland informs us that they called him:--for they attainted him, in the first year of the reign of Edward the Fourth, and granted his estates, a few years afterwards, to the Duke of GloucesterThe ""black-faced Clifford,"" who sullied the glory which he acquired by his gallantry at the battle of Sandal, by murdering his youthful prisoner the Earl of Rutland, in cold blood, at the termination of it, has gained a passport to an odious immortality from the soaring genius of the bard of AvonOne of the first acts of Henry the Seventh, after his accession to the throne, was to reverse the attainder which had been passed against his father; and immediately afterwards the young lord emerged from the hiding place, where he had been brought up in ignorance of his rank, and with the manners and education  Henry Popely, who ventured to disobey him, so severely with his own hand, that he lay for a long time in peril of death.', 'start_char_index': 1, 'end_char_index': 1012, 'score': 0.902248535847025}, {'sentence': 'He spoiled his father\'s houses He likewise took a particular aversion to the religious orders, ""shamefully beating their tenants and servants, in such wise as some whole towns were fain to keep the churches both night and day, and durst not come at their own houses he became the leader of a band of outlaws, and, by their agency, levied aids and benevolences upon the different travellers on the king\'s highway.', 'start_char_index': 1013, 'end_char_index': 1424, 'score': 0.9376020111896263}]",0.9199252735183256
+3,0,0.5441176470588235,0.0615384615384615,0.03125,0.0822222222222222,1424,"Herewith the archbishop being sore offended, departed from them, calling them
+traitors to their king, and enimies to the realme.
+
+About the same time did the French king enter into Normandie with an armie, & comming to the
+towne of Gisors, besieged it, the which one Gilbert de Vascoll or Guascoill capteine thereof
+(to his high reproch) yéelded vp vnto him, with an other castell also called Nefle, which he
+had likewise in kéeping. [Sidenote: Wil.
+","The archbishop was offended with them for this and so he departed accusing them of being traitors to their king, and enemies to the realm.
+Meanwhile the French king reached Normandy with an army and came to the town of Gisors .which he took, the one which Gilbert de Vascoll or Guascoill captain there of yielded unto him along with another castell named Nefle which  he was keeping.
+","[{'sentence': 'The archbishop was offended with them for this and so he departed accusing them of being traitors to their king, and enemies to the realm.Meanwhile the French king reached Normandy with an army and came to the town of Gisors .which he took, the one which Gilbert de Vascoll or Guascoill captain there of yielded unto him along with another castell named Nefle which  he was keeping.', 'start_char_index': 1, 'end_char_index': 382, 'source_sentence': 'About the same time did the French king enter into Normandie with an armie, & comming to the towne of Gisors, besieged it, the which one Gilbert de Vascoll or Guascoill capteine thereof (to his high reproch) yéelded vp vnto him, with an other castell also called Nefle, which he had likewise in kéeping.', 'score': 0.7607318}]",0.7607318162918091,[],0.0
+4,0,0.6410256410256411,0.0533333333333333,0.0,0.0320754716981132,2420,"These were then
+sintered. The third was the ""paste"" process already described. These methods produced fragile
+filaments, but their luminous efficiency was higher than that of previous ones. However, in
+this country ductile tungsten was soon on its way. An ingot of tungsten is subjected to vigorous
+swaging until it takes the form of a rod. This is finally drawn into wire.
+
+Much of this development work was done by the laboratories of the General Electric Company
+and they were destined to contribute another great improvement.
+","They were sintered below. The third was the  Pasta  method described above. These methods produce fragile filaments, but light output was higher than the previous one. But now in this country of ductile tungsten on the road. A tungsten ingot is subjected to high pressure until it is the shape of a bar. Finally, it is intended to son.
+Much of this development was carried out by the laboratories of General Electric Company and will help with other significant improvements.
+","[{'sentence': 'They were sintered below.', 'start_char_index': 1, 'end_char_index': 25, 'source_sentence': 'These were then sintered.', 'score': 0.84987915}, {'sentence': 'But now in this country of ductile tungsten on the road.', 'start_char_index': 166, 'end_char_index': 221, 'source_sentence': 'However, in this country ductile tungsten was soon on its way.', 'score': 0.70686877}, {'sentence': 'A tungsten ingot is subjected to high pressure until it is the shape of a bar.', 'start_char_index': 222, 'end_char_index': 299, 'source_sentence': 'An ingot of tungsten is subjected to vigorous swaging until it takes the form of a rod.', 'score': 0.7954489}, {'sentence': 'Finally, it is intended to son.Much of this development was carried out by the laboratories of General Electric Company and will help with other significant improvements.', 'start_char_index': 300, 'end_char_index': 469, 'source_sentence': 'Much of this development work was done by the laboratories of the General Electric Company and they were destined to contribute another great improvement.', 'score': 0.82930154}]",0.5302497247854868,"[{'sentence': 'These methods produce fragile filaments, but light output was higher than the previous one.', 'start_char_index': 75, 'end_char_index': 165, 'score': 0.45026814465562653}]",0.0750446907759377
+5,1,1.0,0.9402985074626866,0.92,0.0109750949767834,5163,"It was a face full of pride, and, as I saw it then, of scorn--scorn that scarcely deigned to
+laugh; while the girl's graceful figure, slight and maidenly, yet perfectly proportioned, seemed
+instinct with the same feeling of contemptuous amusement.
+
+The play, which seemed long enough to me, might have lasted longer, seeing that no one there
+had pity on me, had I not, in my desperation, espied a door at the farther end of the room,
+and concluded, seeing no other, that it was the door of the king's bedchamber. The mortification
+I was suffering was so great that I did not hesitate, but advanced with boldness towards it.
+On the instant there was a lull in the laughter round me, and half a dozen voices called on
+me to stop.
+
+'I have come to see the king,' I answered, turning on them fiercely, for I was by this time
+in no mood for browbeating, 'and I will see him!'
+
+'He is out hunting,' cried all with one accord; and they signed imperiously to me to go back
+the way I had come.
+
+But having the king's appointment safe in my pouch, I thought I had good reason to disbelieve
+them; and taking advantage of their surprise--for they had not expected so bold a step on my
+part--I was at the door before they could prevent me. I heard Mathurine, the fool, who had
+sprung to her feet, cry 'Pardieu! he will take the Kingdom of Heaven by force!' and those were
+the last words I heard; for, as I lifted the latch--there was no one on guard there--a sudden
+swift silence fell upon the room behind me.
+
+I pushed the door gently open and went in. There were two men sitting in one of the windows,
+who turned and looked angrily towards me. For the rest the room was empty. The king's walking-shoes
+lay by his chair, and beside them the boot-hooks and jack. A dog before the fire got up slowly
+and growled, and one of the men, rising from the trunk on which he had been sitting, came towards
+me and asked me, with every sign of irritation, what I wanted there, and who had given me leave
+to enter.
+
+I was beginning to explain, with some diffidence the stillness of the room sobering me--that
+I wished to see the king, when he who had advanced took me up sharply with, 'The king? the
+king? He is not here, man. He is hunting at St. Valery. Did they not tell you so outside?'
+
+I thought I recognised the speaker, than whom I have seldom seen a man more grave and thoughtful
+for his years, which were something less than mine, more striking in presence, or more soberly
+dressed. And being desirous to evade his question, I asked him if I had not the honour to address
+M. du Plessis Mornay; for that wise and courtly statesman, now a pillar of Henry's counsels,
+it was.
+
+'The same, sir,' he replied, abruptly, and without taking his eyes from me. 'I am Mornay. What
+of that?'
+
+'I am M. de Marsac,' I explained. And there I stopped, supposing that, as he was in the king's
+confidence, this would make my errand clear to him.
+
+But I was disappointed. 'Well, sir?' he said, and waited impatiently.
+
+So cold a reception, following such treatment as I had suffered outside, would have sufficed
+to have dashed my spirits utterly had I not felt the king's letter in my pocket. Being pretty
+confident, however, that a single glance at this would alter M. du Mornay's bearing for the
+better, I hastened, looking on it as a kind of talisman, to draw it out and present it to him.
+
+He took it, and looked at it, and opened it, but with so cold and immovable an aspect as made
+my heart sink more than all that had gone before. 'What is amiss?' I cried, unable to keep
+silence. ''Tis from the king, sir.'
+
+'A king in motley!' he answered, his lip curling.
+
+The sense of his words did not at once strike home to me, and I murmured, in great disorder,
+that the king had sent for me.
+
+'The king knows nothing of it,' was his blunt answer, bluntly given. And he thrust the paper
+back into my hands. 'It is a trick,' he continued, speaking with the same abruptness, 'for
+which you have doubtless to thank some of those idle young rascals without. You had sent an
+application to the king, I suppose? Just so. No doubt they got hold of it, and this is the
+result. They ought to be whipped.'
+
+It was not possible for me to doubt any longer that what he said was true. I saw in a moment
+all my hopes vanish, all my plans flung to the winds; and in the first shock of the discovery
+I could neither find voice to answer him nor strength to withdraw. In a kind of vision I seemed
+to see my own lean, haggard face looking at me as in a glass, and, reading despair in my eyes,
+could have pitied myself.
+
+My disorder was so great that M. du Mornay observed it. Looking more closely at me, he two
+or three times muttered my name, and at last said, 'M. de Marsac? Ha! I remember.
+","The play, which seemed long enough to me, might have lasted longer, seeing that no one there had pity on me, had I not, in my desperation, espied a door at the farther end of the room, and concluded, seeing no other, that it was the door of the king's bedchamber.
+
+
+I have come to see the king,' I answered, turning on them fiercely, for I was by this time in no mood for browbeating.
+
+
+But having the king's appointment safe in my pouch, I thought I had good reason to disbelieve them; and taking advantage of their surprise--for they had not expected so bold a step on my part--I was at the door before they could prevent me
+
+
+I was beginning to explain, with some diffidence the stillness of the room sobering me--that I wished to see the king, when he who had advanced took me up sharply with, 'The king? the king? He is not here, man
+
+
+
+So cold a reception, following such treatment as I had suffered outside, would have sufficed to have dashed my spirits utterly had I not felt the king's letter in my pocket. Being pretty confident, however, that a single glance at this would alter M. du Mornay's bearing for the better, I hastened, looking on it as a kind of talisman
+","[{'sentence': ""Being pretty confident, however, that a single glance at this would alter M. du Mornay's bearing for the better, I hastened, looking on it as a kind of talisman"", 'start_char_index': 1001, 'end_char_index': 1160, 'score': 0.91315824, 'source_sentence': ""Being pretty confident, however, that a single glance at this would alter M. du Mornay's bearing for the better, I hastened, looking on it as a kind of talisman, to draw it out and present it to him.""}]",0.2282895594835281,"[{'sentence': ""The play, which seemed long enough to me, might have lasted longer, seeing that no one there had pity on me, had I not, in my desperation, espied a door at the farther end of the room, and concluded, seeing no other, that it was the door of the king's bedchamber.I have come to see the king,' I answered, turning on them fiercely, for I was by this time in no mood for browbeating.But having the king's appointment safe in my pouch, I thought I had good reason to disbelieve them; and taking advantage of their surprise--for they had not expected so bold a step on my part--I was at the door before they could prevent meI was beginning to explain, with some diffidence the stillness of the room sobering me--that I wished to see the king, when he who had advanced took me up sharply with, 'The king?"", 'start_char_index': 1, 'end_char_index': 799, 'score': 0.8693283269074094}, {'sentence': ""He is not here, manSo cold a reception, following such treatment as I had suffered outside, would have sufficed to have dashed my spirits utterly had I not felt the king's letter in my pocket."", 'start_char_index': 809, 'end_char_index': 1000, 'score': 0.9179560541525597}, {'sentence': ""Being pretty confident, however, that a single glance at this would alter M. du Mornay's bearing for the better, I hastened, looking on it as a kind of talisman"", 'start_char_index': 1001, 'end_char_index': 1160, 'score': 0.91315824, 'source_sentence': ""Being pretty confident, however, that a single glance at this would alter M. du Mornay's bearing for the better, I hastened, looking on it as a kind of talisman, to draw it out and present it to him.""}]",0.6784803005410402
+6,1,0.8115264797507789,0.3082942097026604,0.2429467084639498,0.0095477386934673,5673,"There
+    are in different parts niches which once held the holy water, by
+    which the pious devotees of former ages sprinkled their foreheads
+    on their entrance before the altar, I am not aware that any other
+    remains of the old church are now visible in this chapel. Passing
+    through the eastern end of the south aisle, a pair of gates leads
+    into the Virgin Mary's Chapel.""
+
+From what we remember of the character of this Chapel, the lovers of architecture have little
+to lament in its removal. Our Correspondent, E.E., adds--""This, and not the Lady Chapel, it
+was, (No. 456 of The Mirror,) that contained the gravestone of one Bishop Wickham, who, however,
+was not the famous builder of Windsor Castle, in the time of Edward III., but died in 1595,
+the same year in which he was translated from the see of Lincoln to that of Winchester. His
+gravestone, now lying exposed in the churchyard, marks the south-east corner of the site of
+the aforesaid Magdalen Chapel.""
+
+       *       *       *       *       *
+
+SCOTTISH ECONOMY.
+
+SHAVINGS V. COAL AND PEAT.
+
+(To the Editor.)
+
+Without intending to be angry, permit me to inform your well-meaning correspondent, M.L.B.
+that his observations on the inhabitants of ""Auld Reekie,"" are something like the subject of
+his communication ""Shavings,"" rather superficial.
+
+Improvidence forms no feature in the Scottish character; but your flying tourist charges ""the
+gude folk o' Embro'"" with monstrous extravagance in making bonfires of their carpenters' chips;
+and proceeds to reflect in the true spirit of civilization how much better it would have been
+if the builders' chips had been used in lighting household fires, to the obviously great saving
+of bundle-wood, than to have thus wantonly forced them to waste their gases on the desert air.
+But your traveller forgot that in countries which abound in wheat, rye is seldom eaten; and
+that on the same principle, in Scotland, where coal and peat are abundant, the ""natives,"" like
+the ancient Vestals, never allow their fires to go out, but keep them burning through the whole
+night. The business of the ""gude man"" is, immediately before going to bed, to load the fire
+with coals, and crown the supply with a ""canny passack o' turf,"" which keeps the whole in a
+state of gentle combustion; when, in the morning a sturdy thrust from the poker, produces an
+instantaneous blaze. But, unfortunately, should any untoward ""o'er-night clishmaclaver"" occasion
+the neglect of this duty, and the fire be left, like envy, to feed upon its own vitals, a remedy
+is at hand in the shape of a pan ""o' live coals"" from some more provident neighbour, resident
+in an upper or lower ""flat;"" and thus without bundle-wood or ""shavings,"" is the mischief cured.
+
+I hope that this explanation will sufficiently vindicate my Scottish friends from M.L.B.'s
+aspersion. Scotchmen improvident! never: for workhouses are as scarce among them as bundle-wood,
+or intelligent travellers. Recollect that I am not in a passion; but this I will say, though
+the gorge choke me, that M.L.B. strongly reminds me of the French princess, who when she heard
+of some manufacturers dying in the provinces of starvation, said, ""Poor fools! die of starvation--if
+I were them I would eat bread and cheese first.""
+
+The next time M.L.B. visits Scotland, let him ask the first peasant he meets how to keep eggs
+fresh for years; and he will answer rub a little oil or butter over them, within a day or two
+after laying, and they will keep any length of time, perfectly fresh. This discovery, which
+was made in France by the great Reamur, depends for its success upon the oil filling up the
+pores of the egg-shell, and thereby cutting off the perspiration between the fluids of the
+egg and the atmosphere, which is a necessary agent in putrefaction. The preservation of eggs
+in this manner, has long been practised in all ""braid Scotland;"" but it is not so much as known
+in our own boasted land of stale eggs and bundle-wood.
+","There are niches in different parts which held the holy water once, by which faithful devotees of former times sprinkled their foreheads upon entering before the altar, I am not aware of any remains other than those of the old church which are now visible in this chapel. Passing through the eastern end of the southern aisle, two gates lead into the Virgin Mary's Chapel.""
+
+From what we can recall of this Chapel's character, architecture lovers do not have much to mourn in its removal. E.E., our Correspondent, adds that ""This, and not the Lady Chapel, it was, (No. 456 of The Mirror,) that contained the gravestone of one Bishop Wickham, who, however, was not the famous builder of Windsor Castle, in the time of Edward III., but died in 1595, the same year in which he was translated from the see of Lincoln to that of Winchester. His gravestone, now lying exposed in the churchyard, marks the south-east corner of the site of the aforesaid Magdalen Chapel.""
+
+-----
+
+SCOTTISH ECONOMY.
+
+SHAVINGS V. COAL & PEAT.
+
+{To the Editor.)
+
+Entirely meaning no anger whatsoever, allow me to inform your well-intentioned correspondent, M.L.B., that his observations on the denizes of ""Auld Reekie"" are rather like the topic of his earlier work ""Shavings,"" in that they are quite shallow.
+
+Though one would fail to consider improvidence a feature in the Scottish character, your flying tourist charges ""the gude folk o
+ Embro"" with grand indulgences in making bonfires from their carpenters' chips; and reflects in the true heart of civilization how much preferable it might have been for the builder's chips to have been used in lighting household fires, obviously saving bundle-wood in great quantities, than to have so recklessly forced them to waste their gases on the desert air. But your traveller neglected to remember that in certain countries wherein wheat in bountiful, rye is scarely consumed; and on that same principle, where coal and peat are abundant, as they are in Scotland, the ""natives"" like ancient Vestals would never let their fires burn out, but keep them burning through the night. The business of such a ""gude man"" is then, immediately before leaving to reset, to load coals onto the fire, and top the supply with a ""canny passack o' turf,"" which maintains the flames in a state of gentle combustion; when, that next morning, provides an instant flame. But, unfortunately, should any inconvenient ""o'er-night clishmaclaver"" happen to neglect this duty, leaving the fire to feed enviously upon itself, a remedy is readily available in the form of a pan ""o' live coals"" from a more fortunate neighbour, living an upper or lower ""flat;"" and so is the mischief cured in the absence of bundle-wood or ""shavings"".
+
+It is my hope that this explanation will sufficiently free my friends the Scots from M.L.B.'s aspersion. The Scots, thriftless? Never! Workhouses are as scarce in Scotland as bundle-wood, or clever tourists. Remember that I am not impassioned; yet I will say, though the gorge may choke me, that M.L.B. reminds me strongly of that French princess, who upon hearing of manufacturers dying of starvation, cried, ""Poor fools! Die of starvation -- if I were them I would eat bread and cheese first.""
+
+Upon M.L.B.'s next visit to Scotland, pray him ask the first peasant he may encounter how one keeps eggs fresh for years; and he will reply that one must rub a little butter or oil over them within two days of laying, and they will remain perfectly fresh for any length of time. This discovery, made in France by the esteem Reamur, is dependent for success upon the oil filling the pores of the egg-shell, and thereby preventing the perspiration of the egg's fluids into the atmosphere -- a necessary agent in putrefaction. Preserving eggs in such a way has long been practiced throughout ""braid Scotland;"" yet it is rather less well-known in our own esteemed nation of stale eggs and bundle-wood.
+","[{'sentence': '""From what we can recall of this Chapel\'s character, architecture lovers do not have much to mourn in its removal.', 'start_char_index': 372, 'end_char_index': 485, 'source_sentence': 'From what we remember of the character of this Chapel, the lovers of architecture have little to lament in its removal.', 'score': 0.81510276}, {'sentence': 'But, unfortunately, should any inconvenient ""o\'er-night clishmaclaver"" happen to neglect this duty, leaving the fire to feed enviously upon itself, a remedy is readily available in the form of a pan ""o\' live coals"" from a more fortunate neighbour, living an upper or lower ""flat;"" and so is the mischief cured in the absence of bundle-wood or ""shavings"".It is my hope that this explanation will sufficiently free my friends the Scots from M.L.B.', 'start_char_index': 2349, 'end_char_index': 2793, 'score': 0.8880724, 'source_sentence': 'But, unfortunately, should any untoward ""o\'er-night clishmaclaver"" occasion the neglect of this duty, and the fire be left, like envy, to feed upon its own vitals, a remedy is at hand in the shape of a pan ""o\' live coals"" from some more provident neighbour, resident in an upper or lower ""flat;"" and thus without bundle-wood or ""shavings,"" is the mischief cured.'}, {'sentence': 'reminds me strongly of that French princess, who upon hearing of manufacturers dying of starvation, cried, ""Poor fools!', 'start_char_index': 3001, 'end_char_index': 3119, 'source_sentence': 'strongly reminds me of the French princess, who when she heard of some manufacturers dying in the provinces of starvation, said, ""Poor fools!', 'score': 0.8791267}, {'sentence': 'Die of starvation -- if I were them I would eat bread and cheese first.', 'start_char_index': 3120, 'end_char_index': 3190, 'score': 0.9714961, 'source_sentence': 'die of starvation--if I were them I would eat bread and cheese first.""'}, {'sentence': ""'s next visit to Scotland, pray him ask the first peasant he may encounter how one keeps eggs fresh for years; and he will reply that one must rub a little butter or oil over them within two days of laying, and they will remain perfectly fresh for any length of time."", 'start_char_index': 3203, 'end_char_index': 3469, 'score': 0.9419938, 'source_sentence': 'visits Scotland, let him ask the first peasant he meets how to keep eggs fresh for years; and he will answer rub a little oil or butter over them, within a day or two after laying, and they will keep any length of time, perfectly fresh.'}, {'sentence': ""This discovery, made in France by the esteem Reamur, is dependent for success upon the oil filling the pores of the egg-shell, and thereby preventing the perspiration of the egg's fluids into the atmosphere -- a necessary agent in putrefaction."", 'start_char_index': 3470, 'end_char_index': 3713, 'score': 0.9308595, 'source_sentence': 'This discovery, which was made in France by the great Reamur, depends for its success upon the oil filling up the pores of the egg-shell, and thereby cutting off the perspiration between the fluids of the egg and the atmosphere, which is a necessary agent in putrefaction.'}, {'sentence': 'Preserving eggs in such a way has long been practiced throughout ""braid Scotland;"" yet it is rather less well-known in our own esteemed nation of stale eggs and bundle-wood.', 'start_char_index': 3714, 'end_char_index': 3886, 'source_sentence': 'The preservation of eggs in this manner, has long been practised in all ""braid Scotland;"" but it is not so much as known in our own boasted land of stale eggs and bundle-wood.', 'score': 0.9385957}]",0.2767498674600021,"[{'sentence': 'There are niches in different parts which held the holy water once, by which faithful devotees of former times sprinkled their foreheads upon entering before the altar, I am not aware of any remains other than those of the old church which are now visible in this chapel.', 'start_char_index': 1, 'end_char_index': 271, 'score': 0.6694188517266485}, {'sentence': ""Passing through the eastern end of the southern aisle, two gates lead into the Virgin Mary's Chapel."", 'start_char_index': 272, 'end_char_index': 371, 'score': 0.5507796339456278}, {'sentence': 'E.E., our Correspondent, adds that ""This, and not the Lady Chapel, it was, (No.', 'start_char_index': 486, 'end_char_index': 564, 'score': 0.7327068970668786}, {'sentence': '456 of The Mirror,) that contained the gravestone of one Bishop Wickham, who, however, was not the famous builder of Windsor Castle, in the time of Edward III., but died in 1595, the same year in which he was translated from the see of Lincoln to that of Winchester.', 'start_char_index': 565, 'end_char_index': 830, 'score': 0.9852092313372701}, {'sentence': 'His gravestone, now lying exposed in the churchyard, marks the south-east corner of the site of the aforesaid Magdalen Chapel.""', 'start_char_index': 831, 'end_char_index': 957, 'score': 0.9465199391421731}, {'sentence': '-----SCOTTISH ECONOMY.SHAVINGS V. COAL & PEAT.', 'start_char_index': 958, 'end_char_index': 1003, 'score': 0.6764792400877006}, {'sentence': ')Entirely meaning no anger whatsoever, allow me to inform your well-intentioned correspondent, M.L.B., that his observations on the denizes of ""Auld Reekie"" are rather like the topic of his earlier work ""Shavings,"" in that they are quite shallow.Though one would fail to consider improvidence a feature in the Scottish character, your flying tourist charges ""the gude folk o Embro"" with grand indulgences in making bonfires from their carpenters\' chips; and reflects in the true heart of civilization how much preferable it might have been for the builder\'s chips to have been used in lighting household fires, obviously saving bundle-wood in great quantities, than to have so recklessly forced them to waste their gases on the desert air.', 'start_char_index': 1019, 'end_char_index': 1757, 'score': 0.8363150240554544}, {'sentence': 'But your traveller neglected to remember that in certain countries wherein wheat in bountiful, rye is scarely consumed; and on that same principle, where coal and peat are abundant, as they are in Scotland, the ""natives"" like ancient Vestals would never let their fires burn out, but keep them burning through the night.', 'start_char_index': 1758, 'end_char_index': 2077, 'score': 0.6698277952604175}, {'sentence': 'The business of such a ""gude man"" is then, immediately before leaving to reset, to load coals onto the fire, and top the supply with a ""canny passack o\' turf,"" which maintains the flames in a state of gentle combustion; when, that next morning, provides an instant flame.', 'start_char_index': 2078, 'end_char_index': 2348, 'score': 0.5415443207343177}, {'sentence': 'But, unfortunately, should any inconvenient ""o\'er-night clishmaclaver"" happen to neglect this duty, leaving the fire to feed enviously upon itself, a remedy is readily available in the form of a pan ""o\' live coals"" from a more fortunate neighbour, living an upper or lower ""flat;"" and so is the mischief cured in the absence of bundle-wood or ""shavings"".It is my hope that this explanation will sufficiently free my friends the Scots from M.L.B.', 'start_char_index': 2349, 'end_char_index': 2793, 'score': 0.8880724, 'source_sentence': 'But, unfortunately, should any untoward ""o\'er-night clishmaclaver"" occasion the neglect of this duty, and the fire be left, like envy, to feed upon its own vitals, a remedy is at hand in the shape of a pan ""o\' live coals"" from some more provident neighbour, resident in an upper or lower ""flat;"" and thus without bundle-wood or ""shavings,"" is the mischief cured.'}, {'sentence': 'Die of starvation -- if I were them I would eat bread and cheese first.', 'start_char_index': 3120, 'end_char_index': 3190, 'score': 0.9714961, 'source_sentence': 'die of starvation--if I were them I would eat bread and cheese first.""'}, {'sentence': ""'s next visit to Scotland, pray him ask the first peasant he may encounter how one keeps eggs fresh for years; and he will reply that one must rub a little butter or oil over them within two days of laying, and they will remain perfectly fresh for any length of time."", 'start_char_index': 3203, 'end_char_index': 3469, 'score': 0.9419938, 'source_sentence': 'visits Scotland, let him ask the first peasant he meets how to keep eggs fresh for years; and he will answer rub a little oil or butter over them, within a day or two after laying, and they will keep any length of time, perfectly fresh.'}, {'sentence': ""This discovery, made in France by the esteem Reamur, is dependent for success upon the oil filling the pores of the egg-shell, and thereby preventing the perspiration of the egg's fluids into the atmosphere -- a necessary agent in putrefaction."", 'start_char_index': 3470, 'end_char_index': 3713, 'score': 0.9308595, 'source_sentence': 'This discovery, which was made in France by the great Reamur, depends for its success upon the oil filling up the pores of the egg-shell, and thereby cutting off the perspiration between the fluids of the egg and the atmosphere, which is a necessary agent in putrefaction.'}]",0.4057946040476239
+7,1,1.0,1.0,1.0,0.0634602538410153,7698,"
+His rather imposing list of works includes a symphony (1885), an operetta, a concert overture
+(1884), an overture, ""Regulus"" (1885), performed in Munich and in London, and an overture,
+""Count Robert of Paris"" (1890), performed in New York, a ballad for chorus and orchestra, ""King
+Trojan,"" presented in Munich in 1885, the Twenty-third Psalm for female chorus and orchestra
+(1884), an ""Idylle"" (1891); ""The Normans,"" ""The Kobolds,"" and ""Harold Harfager,"" all for chorus
+and orchestra, and all dated 1891; an oratorio, three or more cantatas, and various bits of
+chamber-music. His opus number has already reached forty-three, and it is eked out to a very
+small degree by such imponderous works as organ and piano solos, hymns, and songs. In 1893,
+Parker won the National Conservatory prize for a cantata, and in 1898 the McCagg prize for
+an a cappella chorus.
+
+Parker's piano compositions and secular songs are not numerous. They seem rather the incidental
+byplays and recreations of a fanry chiefly turned to sacred music of the larger forms.
+
+Opus 19 consists of ""Four Sketches,"" of which the ""Étude Melodieuse"" is as good as is necessary
+in that overworked style, wherein a thin melody is set about with a thinner ripple of arpeggios.
+The ""Romanza"" is lyric and delightful, while the ""Scherzino"" is delicious and crisp as celery;
+it is worthy of Schumann, whom it suggests, and many of whose cool tones and mannerisms it borrows.
+
+The ""5 Morceaux Charactéristiques"" are on the whole better.
+","His rather imposing list of works includes a symphony (1885), an operetta, a concert overture (1884), an overture, ""Regulus"" (1885), performed in Munich and in London, and an overture, ""Count Robert of Paris"" (1890), performed in New York, a ballad for chorus and orchestra, ""King Trojan,"" presented in Munich in 1885, the Twenty-third Psalm for female chorus and orchestra (1884), an ""Idylle"" (1891); ""The Normans,"" ""The Kobolds,"" and ""Harold Harfager,"" all for chorus and orchestra, and all dated 1891; an oratorio, three or more cantatas, and various bits of chamber-music. His opus number has already reached forty-three, and it is eked out to a very small degree by such imponderous works as organ and piano solos, hymns, and songs. In 1893, Parker won the National Conservatory prize for a cantata, and in 1898 the McCagg prize for an a cappella chorus. 
+
+Parker's piano compositions and secular songs are not numerous. They seem rather the incidental byplays and recreations of a fanry chiefly turned to sacred music of the larger forms. 
+
+Opus 19 consists of ""Four Sketches,"" of which the ""Étude Melodieuse"" is as good as is necessary in that overworked style, wherein a thin melody is set about with a thinner ripple of arpeggios. The ""Romanza"" is lyric and delightful, while the ""Scherzino"" is delicious and crisp as celery; it is worthy of Schumann, whom it suggests, and many of whose cool tones and mannerisms it borrows. 
+
+The ""5 Morceaux Charactéristiques"" are on the whole better.
+",[],0.0,"[{'sentence': 'His rather imposing list of works includes a symphony (1885), an operetta, a concert overture (1884), an overture, ""Regulus"" (1885), performed in Munich and in London, and an overture, ""Count Robert of Paris"" (1890), performed in New York, a ballad for chorus and orchestra, ""King Trojan,"" presented in Munich in 1885, the Twenty-third Psalm for female chorus and orchestra (1884), an ""Idylle"" (1891); ""The Normans,"" ""The Kobolds,"" and ""Harold Harfager,"" all for chorus and orchestra, and all dated 1891; an oratorio, three or more cantatas, and various bits of chamber-music.', 'start_char_index': 1, 'end_char_index': 576, 'score': 0.9958410639631474}, {'sentence': 'His opus number has already reached forty-three, and it is eked out to a very small degree by such imponderous works as organ and piano solos, hymns, and songs.', 'start_char_index': 577, 'end_char_index': 736, 'score': 0.946519939142173}, {'sentence': 'In 1893, Parker won the National Conservatory prize for a cantata, and in 1898 the McCagg prize for an a cappella chorus.', 'start_char_index': 737, 'end_char_index': 857, 'score': 0.9480258426701694}, {'sentence': ""Parker's piano compositions and secular songs are not numerous."", 'start_char_index': 858, 'end_char_index': 920, 'score': 0.8336336389685021}, {'sentence': 'They seem rather the incidental byplays and recreations of a fanry chiefly turned to sacred music of the larger forms.', 'start_char_index': 921, 'end_char_index': 1038, 'score': 0.920740189741329}, {'sentence': 'Opus 19 consists of ""Four Sketches,"" of which the ""Étude Melodieuse"" is as good as is necessary in that overworked style, wherein a thin melody is set about with a thinner ripple of arpeggios.', 'start_char_index': 1039, 'end_char_index': 1230, 'score': 0.9596398661682165}, {'sentence': 'The ""Romanza"" is lyric and delightful, while the ""Scherzino"" is delicious and crisp as celery; it is worthy of Schumann, whom it suggests, and many of whose cool tones and mannerisms it borrows.', 'start_char_index': 1231, 'end_char_index': 1424, 'score': 0.9675892012612053}, {'sentence': 'The ""5 Morceaux Charactéristiques"" are on the whole better.', 'start_char_index': 1425, 'end_char_index': 1483, 'score': 0.8831282039194523}]",0.9318897432292744
+8,0,0.7652399481193255,0.1510416666666666,0.0964797913950456,0.0073319755600814,5280,"When the tube is screwed in the socket, the powder mixes with the oleic acid. The water
+coming in at first makes the linseed powder viscid. Later the steam forming the oleate of lime
+and the oleate of lead, on its way to the outer air, presses it in the holes and closes them
+perfectly.
+
+After a year in use the tubes can be unscrewed with ease, and the screw threads are perfectly
+smooth.
+
+With this kind of packing only one exception must be made--that is, it is only tight under
+pressure; condensation or vacuum must be thoroughly avoided.--Chem. News.
+
+       *       *       *       *       *
+
+LUMINOUS PAINT.
+
+In answer to various inquiries concerning the manufacture of this article, we give herewith
+the process of William Henry Balmain, the original discoverer of luminous paint, and also other
+processes. These particulars are derived from the letters patent granted in this country to
+the parties named.
+
+Balmain's invention was patented in England in 1877, and in this country in 1882. It is styled
+as Improvements in Painting, Varnishing, and Whitewashing, of which the following is a specification:
+
+The said invention consists in a luminous paint, the body of which is a phosphorescent compound,
+or is composed in part of such a compound, and the vehicle of which is such as is used as the
+vehicle in ordinary paint compounds, viz., one which becomes dry by evaporation or oxidation.
+
+The objector article to which such paint or varnish or wash is applied is itself rendered visible
+in the darkest place, and more or less capable of imparting light to other objects, so as to
+render them visible also. The phosphorescent substance found most suitable for the purpose
+is a compound obtained by simply heating together a mixture of lime and sulphur, or carbonate
+of lime and sulphur, or some of the various substances containing in themselves both lime and
+sulphur--such, for example, as alabaster, gypsum, and the like--with carbon or other agent
+to remove a portion of the oxygen contained in them, or by heating lime or carbonate of lime
+in a gas or vapor containing sulphur.
+
+The vehicle to be used for the luminous paint must be one which will dry by evaporation or
+oxidation, in order that the paint may not become soft or fluid by heat or be liable to be
+easily rubbed off by accident or use from the articles to which it has been applied. It may
+be any of the vehicles commonly used in oil-painting or any of those commonly used in what
+is known as ""distemper"" painting or whitewashing, according to the place or purpose in or for
+which the paint is to be used.
+
+It is found the best results are obtained by mixing the phosphorescent substance with a colorless
+varnish made with mastic or other resinous body and turpentine or spirit, making the paint
+as thick as convenient to apply with a brush, and with as much turpentine or spirit as can
+be added without impairing the required thickness. Good results may, however, be obtained with
+drying oils, spirit varnishes, gums, pastes, sizes, and gelatine solutions of every description,
+the choice being varied to meet the object in view or the nature of the article in hand.
+
+The mode of applying the paint, varnish, or wash will also depend upon the circumstances of
+the case. For example, it may be applied by a brush, as in ordinary painting, or by dipping
+or steeping the article in the paint, varnish, or wash; or a block or type may be used to advantage,
+as in calico-printing and the like. For outdoor work, or wherever the surface illuminated is
+exposed to the vicissitudes of weather or to injury from mechanical contingencies, it is desirable
+to cover it with glass, or, if the article will admit of it, to glaze it over with a flux,
+as in enameling, or as in ordinary pottery, and this may be accomplished without injury to
+the effect, even when the flux or glaze requires a red heat for fusion.
+
+Among other applications of the said invention which may be enumerated, it is particularly
+advantageous for rendering visible clock or watch faces and other indicators--such, for example,
+as compasses and the scales of barometers or thermometers--during the night or in dark places
+during the night time. In applying the invention to these and other like purposes there may
+be used either phosphorescent grounds with dark figures or dark grounds and phosphorescent
+figures or letters, preferring the former. In like manner there may be produced figures and
+letters for use on house-doors and ends of streets, wherever it is not convenient or economical
+to have external source of light, signposts, and signals, and names or marks to show entries
+to avenues or gates, and the like.
+
+The invention is also applicable to the illumination of railway carriages by painting with
+phosphorescent paint a portion of the interior, thus obviating the necessity for the expense
+and inconvenience of the use of lamps in passing through tunnels.
+","If the tube is screwed into the socket of dust mixed with oleic acid. Water enters the first to make linseed sticky powder. Late oleate time of formation of lime and oleate of lead, on the way to the outside air, it presses into the holes and closes them completely.
+
+After years of using the tube can be easily otvintva and screws perfectly smooth.
+
+With this type of packaging is only one exception must be made - something that only the strong pressure, condensation or vacuum must be carefully avoided .-- Chem. News.
+
+* * * * * *
+
+Illuminated paint.
+
+In response to other questions related to this article, we give this process, William Henry Balmain, the original discoverer of light paint, and other processes. These data were obtained letters patent of the State, the name of the country.
+
+Balmain invention was patented in England in the 1877 and in this country in 1882. It is in the form of improvements in the painting, painting and whitewashing, which has the following characteristics:
+
+The invention consists in a light color, whose body phosphorus compounds, or is part of such a substance and a vehicle such that it is used as a tool in conventional paint compounds, ie 1, which becomes dry by evaporation of oxidation.
+
+Article of the enemy, which paint or varnish or rinse is used by itself are visible in a dark place, more or less capable of transmitting light of other sites in order to make them visible as well. In phosphorescent substance found most suitable for this purpose is a mixture obtained by simply heating together a mixture of limestone and sulfur, or carbonates of lime and sulfur, or some other substance containing in themselves, and lime sulfur - such as as alabaster, gypsum and etc. - With carbon or any other agent to remove part of the oxygen contained therein, or when heated lemon or lime carbonate gas or vapor containing sulfur.
+
+The vehicle must be used to light the paint should be a kind of dry evaporation or oxidation, so that paint can not become soft or liquid by heat or should be easily erased by accident or through the use of devices for which it was applied. It can be any of the cars are widely used in oil painting or any of those commonly used in the so-called ""diseases"" whitewash or paint, depending on the location and purpose, or are afraid to be used.
+
+These are the best results are obtained by mixing a phosphorescent substance with colorless varnish made from cement or other resinous body and soul or spirit as the paint as thick as convenient to apply with a brush, and with much spirit or spirit, can be added without prejudice to the required thickness. Good results can be obtained from linseed oil, varnishes spirit, glues, pastes, sizes and gelatin solutions of any kind, the choice of changing to meet the object in view or the nature of the articles on hand.
+
+The method of applying the paint, varnish, or wash will depend on the circumstances of the case. For example, it can be applied with a brush, as in conventional painting or by dipping or soaking the article in the paint, varnish, or wash, or a block or type can be used for, as in the press and the like. In foreign policy, or where the surface is illuminated prone to the vagaries of weather or damage resulting from mechanical circumstances it is desirable to cover the glass or if the material will admit it, glaze it to flow, as in the enamel or, as in the ordinary courts, but this can be done without prejudice to the action, even if the thread or red icing requires a high temperature for fusion.
+
+Among other applications of the invention said that may be listed, it is particularly beneficial to provide visible clock or watch parties and other indicators - such as, for example, compasses and scale of the barometer and thermometer - at night or in dark places at night. In applying the invention these and other similar purposes may be used phosphorous bases or dark shadowy figures in the field of law and phosphorescent numerals or letters, choose the former. Additionally, there may be letters and numbers, prepared for use at home and doors at the edges of the street, where it is not convenient and cost-effective to have an external light source, traffic signs and signals, as well as the names or marks to indicate records of roads and gates, and to like.
+
+The invention also relates to painting with light rail cars with phosphorescent paint of the interior, thereby eliminating the need for cost and inconvenience of light passing through the tunnel.
+","[{'sentence': 'If the tube is screwed into the socket of dust mixed with oleic acid.', 'start_char_index': 1, 'end_char_index': 69, 'source_sentence': 'When the tube is screwed in the socket, the powder mixes with the oleic acid.', 'score': 0.90370244}, {'sentence': 'Water enters the first to make linseed sticky powder.', 'start_char_index': 70, 'end_char_index': 122, 'source_sentence': 'The water coming in at first makes the linseed powder viscid.', 'score': 0.81749725}, {'sentence': 'Late oleate time of formation of lime and oleate of lead, on the way to the outside air, it presses into the holes and closes them completely.After years of using the tube can be easily otvintva and screws perfectly smooth.With this type of packaging is only one exception must be made - something that only the strong pressure, condensation or vacuum must be carefully avoided .-- Chem.', 'start_char_index': 123, 'end_char_index': 509, 'source_sentence': 'For outdoor work, or wherever the surface illuminated is exposed to the vicissitudes of weather or to injury from mechanical contingencies, it is desirable to cover it with glass, or, if the article will admit of it, to glaze it over with a flux, as in enameling, or as in ordinary pottery, and this may be accomplished without injury to the effect, even when the flux or glaze requires a red heat for fusion.', 'score': 0.8052497}, {'sentence': 'These data were obtained letters patent of the State, the name of the country.Balmain invention was patented in England in the 1877 and in this country in 1882.', 'start_char_index': 705, 'end_char_index': 864, 'score': 0.81163824, 'source_sentence': ""Balmain's invention was patented in England in 1877, and in this country in 1882.""}, {'sentence': 'In phosphorescent substance found most suitable for this purpose is a mixture obtained by simply heating together a mixture of limestone and sulfur, or carbonates of lime and sulfur, or some other substance containing in themselves, and lime sulfur - such as as alabaster, gypsum and etc.', 'start_char_index': 1415, 'end_char_index': 1702, 'score': 0.92631745, 'source_sentence': 'The phosphorescent substance found most suitable for the purpose is a compound obtained by simply heating together a mixture of lime and sulphur, or carbonate of lime and sulphur, or some of the various substances containing in themselves both lime and sulphur--such, for example, as alabaster, gypsum, and the like--with carbon or other agent to remove a portion of the oxygen contained in them, or by heating lime or carbonate of lime in a gas or vapor containing sulphur.'}, {'sentence': 'In foreign policy, or where the surface is illuminated prone to the vagaries of weather or damage resulting from mechanical circumstances it is desirable to cover the glass or if the material will admit it, glaze it to flow, as in the enamel or, as in the ordinary courts, but this can be done without prejudice to the action, even if the thread or red icing requires a high temperature for fusion.Among other applications of the invention said that may be listed, it is particularly beneficial to provide visible clock or watch parties and other indicators - such as, for example, compasses and scale of the barometer and thermometer - at night or in dark places at night.', 'start_char_index': 3113, 'end_char_index': 3785, 'score': 0.8776324, 'source_sentence': 'For outdoor work, or wherever the surface illuminated is exposed to the vicissitudes of weather or to injury from mechanical contingencies, it is desirable to cover it with glass, or, if the article will admit of it, to glaze it over with a flux, as in enameling, or as in ordinary pottery, and this may be accomplished without injury to the effect, even when the flux or glaze requires a red heat for fusion.'}, {'sentence': 'In applying the invention these and other similar purposes may be used phosphorous bases or dark shadowy figures in the field of law and phosphorescent numerals or letters, choose the former.', 'start_char_index': 3786, 'end_char_index': 3976, 'source_sentence': 'In applying the invention to these and other like purposes there may be used either phosphorescent grounds with dark figures or dark grounds and phosphorescent figures or letters, preferring the former.', 'score': 0.8501179}, {'sentence': 'Additionally, there may be letters and numbers, prepared for use at home and doors at the edges of the street, where it is not convenient and cost-effective to have an external light source, traffic signs and signals, as well as the names or marks to indicate records of roads and gates, and to like.The invention also relates to painting with light rail cars with phosphorescent paint of the interior, thereby eliminating the need for cost and inconvenience of light passing through the tunnel.', 'start_char_index': 3977, 'end_char_index': 4471, 'source_sentence': 'In like manner there may be produced figures and letters for use on house-doors and ends of streets, wherever it is not convenient or economical to have external source of light, signposts, and signals, and names or marks to show entries to avenues or gates, and the like.', 'score': 0.8555855}]",0.4565160592397054,"[{'sentence': '* * * * * *Illuminated paint.In response to other questions related to this article, we give this process, William Henry Balmain, the original discoverer of light paint, and other processes.', 'start_char_index': 515, 'end_char_index': 704, 'score': 0.6957682205812495}, {'sentence': 'These data were obtained letters patent of the State, the name of the country.Balmain invention was patented in England in the 1877 and in this country in 1882.', 'start_char_index': 705, 'end_char_index': 864, 'score': 0.81163824, 'source_sentence': ""Balmain's invention was patented in England in 1877, and in this country in 1882.""}, {'sentence': 'In phosphorescent substance found most suitable for this purpose is a mixture obtained by simply heating together a mixture of limestone and sulfur, or carbonates of lime and sulfur, or some other substance containing in themselves, and lime sulfur - such as as alabaster, gypsum and etc.', 'start_char_index': 1415, 'end_char_index': 1702, 'score': 0.92631745, 'source_sentence': 'The phosphorescent substance found most suitable for the purpose is a compound obtained by simply heating together a mixture of lime and sulphur, or carbonate of lime and sulphur, or some of the various substances containing in themselves both lime and sulphur--such, for example, as alabaster, gypsum, and the like--with carbon or other agent to remove a portion of the oxygen contained in them, or by heating lime or carbonate of lime in a gas or vapor containing sulphur.'}, {'sentence': 'It can be any of the cars are widely used in oil painting or any of those commonly used in the so-called ""diseases"" whitewash or paint, depending on the location and purpose, or are afraid to be used.These are the best results are obtained by mixing a phosphorescent substance with colorless varnish made from cement or other resinous body and soul or spirit as the paint as thick as convenient to apply with a brush, and with much spirit or spirit, can be added without prejudice to the required thickness.', 'start_char_index': 2094, 'end_char_index': 2600, 'score': 0.7900322566465154}, {'sentence': 'Good results can be obtained from linseed oil, varnishes spirit, glues, pastes, sizes and gelatin solutions of any kind, the choice of changing to meet the object in view or the nature of the articles on hand.The method of applying the paint, varnish, or wash will depend on the circumstances of the case.', 'start_char_index': 2601, 'end_char_index': 2905, 'score': 0.8274099717181932}, {'sentence': 'For example, it can be applied with a brush, as in conventional painting or by dipping or soaking the article in the paint, varnish, or wash, or a block or type can be used for, as in the press and the like.', 'start_char_index': 2906, 'end_char_index': 3112, 'score': 0.8114301161975614}, {'sentence': 'In foreign policy, or where the surface is illuminated prone to the vagaries of weather or damage resulting from mechanical circumstances it is desirable to cover the glass or if the material will admit it, glaze it to flow, as in the enamel or, as in the ordinary courts, but this can be done without prejudice to the action, even if the thread or red icing requires a high temperature for fusion.Among other applications of the invention said that may be listed, it is particularly beneficial to provide visible clock or watch parties and other indicators - such as, for example, compasses and scale of the barometer and thermometer - at night or in dark places at night.', 'start_char_index': 3113, 'end_char_index': 3785, 'score': 0.8776324, 'source_sentence': 'For outdoor work, or wherever the surface illuminated is exposed to the vicissitudes of weather or to injury from mechanical contingencies, it is desirable to cover it with glass, or, if the article will admit of it, to glaze it over with a flux, as in enameling, or as in ordinary pottery, and this may be accomplished without injury to the effect, even when the flux or glaze requires a red heat for fusion.'}]",0.342167182135297
+9,0,0.7157360406091371,0.0773195876288659,0.0414507772020725,0.013689700130378,7140,"The thirst of gold everywhere precedes the desire of instruction, and a taste for researches into antiquity; in all the mountainous part of South America, from Merida and Santa Martha to the table-lands of Quito and Upper Peru, the labours of absolute mining have been undertaken to discover tombs, or, as the Creoles say, employing a word altered from the Inca language, guacas. 
+
+ When in Peru, at Mancichi, I went into the guaca from which, in the sixteenth century, masses of gold of great value were extracted. 
+
+ No trace of the precious metals has been found in the caverns which have served the natives of Guiana for ages as sepulchres. This circumstance proves that even at the period when the Caribs, and other travelling nations, made incursions to the south-west, gold had flowed in very small quantities from the mountains of Peru towards the eastern plains. 
+
+ Wherever the granitic rocks do not present any of those large cavities caused by their decomposition, or by an accumulation of their blocks, the Indians deposit their dead in the earth. 
+
+ The hammock (chinchorro), a kind of net in which the deceased had reposed during his life, serves for a coffin. 
+
+ This net is fastened tight round the body, a hole is dug in the hut, and there the body is laid. This is the most usual method, according to the account of the missionary Gili, and it accords with what I myself learned from Father Zea. I do not believe that there exists one tumulus in Guiana, not even in the plains of the Cassiquiare and the Essequibo.
+","Gold lust reigns supreme. It overcomes both the desire for learning and archeological research. Along the mountain ranges of South America, from Merida and Santa Martha to the Quito and Upper Peruvian plateaus, mining operations have been launched, or in the language of the Creoles, ""guacas"".
+
+I visited the guaca in Mancichi, Peru, where in the sixteenth century large quantities of gold were mined. But no discovery of precious metals has been made in the caverns the Guiana people use for burial. This supports the theory that when the Caribs, and other nomads, travelled in the south-west, small quantities of gold flowed from the Peruvian mountains towards the eastern mesas. 
+
+The local Indians bury their dead in the earth when they cannot find any large holes caused by the decomposition of granitic rocks. The deceased is wrapped tightly in his sleeping hammock. This hammock, made of net, is called a ""chinchorro"" in the local language,serves as shroud. The body is then buried in a hole dug in the hut, according to Gili, the missionary. I heard the same from Father Zea. In my opinion, there is not one mound in all of Guiana, not even in Cassiquiare and Essequibo.
+","[{'sentence': 'But no discovery of precious metals has been made in the caverns the Guiana people use for burial.', 'start_char_index': 398, 'end_char_index': 495, 'source_sentence': 'No trace of the precious metals has been found in the caverns which have served the natives of Guiana for ages as sepulchres.', 'score': 0.819849}, {'sentence': 'This supports the theory that when the Caribs, and other nomads, travelled in the south-west, small quantities of gold flowed from the Peruvian mountains towards the eastern mesas.', 'start_char_index': 496, 'end_char_index': 675, 'source_sentence': 'This circumstance proves that even at the period when the Caribs, and other travelling nations, made incursions to the south-west, gold had flowed in very small quantities from the mountains of Peru towards the eastern plains.', 'score': 0.8853959}, {'sentence': 'The local Indians bury their dead in the earth when they cannot find any large holes caused by the decomposition of granitic rocks.', 'start_char_index': 676, 'end_char_index': 806, 'source_sentence': 'Wherever the granitic rocks do not present any of those large cavities caused by their decomposition, or by an accumulation of their blocks, the Indians deposit their dead in the earth.', 'score': 0.88783836}, {'sentence': 'The body is then buried in a hole dug in the hut, according to Gili, the missionary.', 'start_char_index': 954, 'end_char_index': 1037, 'source_sentence': 'This net is fastened tight round the body, a hole is dug in the hut, and there the body is laid.', 'score': 0.7679111}, {'sentence': 'In my opinion, there is not one mound in all of Guiana, not even in Cassiquiare and Essequibo.', 'start_char_index': 1071, 'end_char_index': 1164, 'source_sentence': 'I do not believe that there exists one tumulus in Guiana, not even in the plains of the Cassiquiare and the Essequibo.', 'score': 0.88416386}]",0.3859234723177823,"[{'sentence': 'Along the mountain ranges of South America, from Merida and Santa Martha to the Quito and Upper Peruvian plateaus, mining operations have been launched, or in the language of the Creoles, ""guacas"".I visited the guaca in Mancichi, Peru, where in the sixteenth century large quantities of gold were mined.', 'start_char_index': 95, 'end_char_index': 397, 'score': 0.6392306240536285}]",0.0581118749139662

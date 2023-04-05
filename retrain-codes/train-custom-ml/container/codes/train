@@ -1,0 +1,429 @@
+#!/usr/bin/env python
+
+# A sample training component that trains a simple scikit-learn decision tree model.
+# This implementation works in File mode and makes no assumptions about the input file names.
+# Input is specified as CSV with a data point in each row and the labels in the first column.
+
+from __future__ import print_function
+
+import os
+import joblib
+import json
+import sys
+import traceback
+import re
+from io import BytesIO
+
+import pandas as pd
+import os
+import torch
+import numpy as np
+from sklearn.model_selection import train_test_split
+import math 
+import difflib
+import sklearn
+import boto3
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report, precision_score, accuracy_score, recall_score, f1_score
+from sklearn.metrics.pairwise import cosine_similarity
+from textmatcher import Matcher, Text
+import torch
+
+import nltk
+nltk.download('stopwords')
+
+import warnings
+warnings.filterwarnings("ignore")
+
+# These are the paths to where SageMaker mounts interesting things in your container.
+
+prefix = '/opt/ml/'
+
+input_path = prefix + 'input/data'
+output_path = os.path.join(prefix, 'output/data')
+model_path = os.path.join(prefix, 'model')
+param_path = os.path.join(prefix, 'input/config/hyperparameters.json')
+eval_path = os.path.join(prefix, 'evaluation')
+
+# This algorithm has a single channel of input data called 'training'. Since we run in
+# File mode, the input files are copied to the directory specified here.
+channel_name='training'
+training_path = os.path.join(input_path, channel_name)
+
+## CONFIG
+BERTMODEL_BUCKET = 'nus-sambaash' # eg. 'nus-sambaash'
+BERTMODEL_PATH = 'plagiarism-detector/models/trained_bert_model.joblib' # eg. 'plagiarism-detector/models/trained_bert_model.joblib'
+
+###### UTIL FUNCTIONS ######
+
+# 1. Containment
+
+# 1.1 Vocab counts
+
+def get_vocab_counts(text_fileText, orig_fileText, n):
+    '''
+    Using CountVectorizer, create vocab based on both texts.
+    Count number of occurence of each ngram
+    '''
+    counts_ngram = CountVectorizer(analyzer='word', ngram_range=(n, n))
+    vocab = counts_ngram.fit([text_fileText, orig_fileText]).vocabulary_
+    counts = counts_ngram.fit_transform([text_fileText, orig_fileText])
+    return vocab, counts.toarray()
+
+
+# 1.2. Calculate ngram containment for each text/original file
+def calc_containment(text_fileText, orig_fileText, n):
+    '''
+    calculates the containment between a given text and its original text
+    This creates a count of ngrams (of size n) then calculates the containment by finding the ngram count for a text file
+    and its associated original tezt -> then calculates the normalised intersection
+    '''
+    # create vocab and count occurence of each ngram
+    
+    if pd.isnull(text_fileText):
+        count_ngram = 10
+        intersection = 0
+    else:  
+        vocab, ngram_counts = get_vocab_counts(text_fileText, orig_fileText, n)
+        # calc containment
+        intersectionList = np.amin(ngram_counts, axis = 0)
+        intersection = np.sum(intersectionList)
+        count_ngram = np.sum(ngram_counts[0])
+    return np.round(intersection/count_ngram,5)
+
+# 2. LCS features
+def calc_lcs(text_fileText, orig_fileText):   
+    text_length = len(text_fileText) if text_fileText else 0 
+    orig_length = len(orig_fileText) if orig_fileText else 0 
+    max_len = max(text_length, orig_length)
+
+    matcher = difflib.SequenceMatcher(None, text_fileText, orig_fileText)
+    # calculate the ratio of the longest common subsequence and the length of the longer text
+    lcs_ratio = matcher.find_longest_match(0, text_length, 0, orig_length).size / max_len
+    return lcs_ratio
+
+# 3. Cosine Similarity Features
+
+# 3.1. Preprocess text by splitting into sentences
+
+def get_preprocessed_sent(input_doc):
+    """
+    Returns input document, split by sentences
+    Args:
+        input_doc (str): Input document.
+    
+    Returns:
+        res (list[tuple]): Input document, split by sentences. Contains tuple (start_ind, end_ind, sentence)
+    """
+    input_doc = str(input_doc)
+    input_doc = input_doc.replace('\n', '')
+
+    input_text_lst = re.split(r' *[\.\?!][\'"\)\]]* *', input_doc)
+    input_text_lst = [text for text in input_text_lst if text]
+
+    res = []
+    start_char = 1
+
+    for s in range(len(input_text_lst)):
+        res.append({'sentence': input_text_lst[s], 'start_char_index': start_char, 'end_char_index': start_char + len(input_text_lst[s])-1})
+        start_char = start_char + len(input_text_lst[s])
+    
+    return res
+
+# 3.2. Get direct matching scores between texts
+
+def get_matching_texts(input_text_lst, source_doc, source_doc_name):
+    """
+    Returns list of dictionary of matching texts 
+        (input_doc_text, input_doc_start, input_doc_end, source_doc_text, 
+        source_doc_start, source_doc_end, source_doc_id, cosine_similarity_score) &
+        the sentence indices of input documents that are flagged as direct matches.
+    
+    Args:
+        input_text_lst (list): Input document of interest, split by sentences.
+        source_doc (string): Source input document.
+        source_doc_name (str): Name of source document.
+    Returns:
+        output_lst (list): List of dictionary of matching texts and their details.
+        match_lst (list): List of indices of sentences which were flagged as direct plagiarism
+    """
+    output_lst = []
+    match_lst = []
+    source_doc = Text(source_doc)
+
+    for i in range(len(input_text_lst)):
+        input_sent_dict = input_text_lst[i]
+        input_sent = input_sent_dict['sentence']
+        if len(input_sent.split()) <= 3:
+            continue
+        try:
+            input_sent = Text(input_sent)
+            match = Matcher(input_sent, source_doc).match()
+            if len(match) != 0:
+                match_lst.append(i)
+                output_dict = input_sent_dict.copy()
+                output_dict['source_sentence'] = match[0]['source_sentence']
+                output_dict['source_doc_name'] = source_doc_name
+                output_dict['score'] = match[0]['score']
+                output_lst.append(output_dict)
+                    
+        except:
+            pass
+
+    return output_lst, match_lst
+
+# 3.3. Get sentences which were not plagiarised   
+
+def get_non_direct_texts(input_text_lst, match_lst):
+    """
+    Returns a list of dictionaries of input document's non-direct matching indices & texts.
+    Args:
+        input_text_lst (list): Input document, split by sentences.
+        match_ind_lst (list): Sentence indices of input documents that are flagged as direct matches.
+    Returns:
+        nonmatch_lst (list[dict]): Input document that is not detected as direct matches, split by sentences. Contains tuple (start_ind, end_ind, sentence).
+    """
+    
+    nonmatch_lst = []
+    match_lst = set(match_lst)
+
+    for i in range(len(input_text_lst)):
+        if i not in match_lst:
+            nonmatch_lst.append(input_text_lst[i])
+
+    return nonmatch_lst
+
+# 3.4. Classify 'paraphrased' sentences as 'direct plagiarism' sentences 
+
+def modified_output_lists(direct_output_lst, para_output_lst, threshold=0.95):
+    """
+    Returns the modified output lists for both direct matching and paraphrasing lists, given threshold.
+    Output with similarity scores > threshold in the paraphrased output list will be moved to the direct output list.
+    Args:
+        direct_output_lst (list): List of dictionary of direct matching texts and their details.
+        para_output_lst (list): List of dictionary of paraphrased texts and their details.
+        threshold (float): Threshold of similarity score to flag paraphrased texts as direct matches.
+    Returns:
+        new_direct_lst (list): Modified list of dictionary of direct matching texts and their details.
+        new_para_lst (list): Modified list of dictionary of paraphrased texts and their details.
+    """
+    filter_para_lst = []
+    new_para_lst = []
+
+    for dict in para_output_lst:
+        if dict['score'] >= threshold:
+            filter_para_lst.append(dict)
+        else:
+            new_para_lst.append(dict)
+
+    new_direct_lst = direct_output_lst + filter_para_lst 
+
+    return new_direct_lst, new_para_lst
+
+# 3.5. Get plagiarism scores
+def get_avg_score(input_text_lst, output_lst):
+    """
+    Returns the average of cosine similarity scores over number of sentences in input document.
+    Args:
+        input_text_lst (list): Input document, split by sentences.
+        output_lst (list):  List of dictionary of matching texts and their details.
+    Returns:
+        avg_score (float): Average cosine similarity scores over number of sentences in input document.
+    """
+    input_doc_len = len(input_text_lst)
+    if input_doc_len == 0:
+        return 0
+    total_score = 0
+    for score in output_lst:
+        total_score += score['score']
+    avg_score = total_score / input_doc_len
+
+    return avg_score
+
+# 3.6. Load custom sentence transformer model from s3 bucket
+def load_model(bucket, filename):
+    s3 = boto3.resource('s3')
+    with BytesIO() as data:
+        s3.Bucket(bucket).download_fileobj(filename, data)
+        data.seek(0)
+        model = joblib.load(data)
+
+    return model
+
+def get_default_device():
+    """Picking GPU if available or else CPU"""
+    if torch.cuda.is_available():
+        return 'cuda'
+    else:
+        return 'cpu'
+
+# 3.7. Get paraphrased matches
+def get_paraphrase_predictions(model, nonmatch_lst, source_doc, source_doc_name, threshold, device):
+    """
+    Returns a list of json containing paraphrased sentences' details, predicted from trained Sentence Transformer model.
+    
+    Args: 
+        model (SentenceTransformer): Sentence Transformer model.
+        nonmatch_lst (list[str]): List of sentences not detected as direct matches. 
+        source_doc (str): Source document.
+        source_doc_name (str): Name of source document.
+        threshold (float): Threshold of similarity score to flag sentence as paraphrased.
+            
+    Returns:
+        res_list (list[dict]): List of json containing paraphrased sentence details.
+        example:
+        [
+            {
+              "sentence": "\"enraged at their disappointment, Irish soldiers carved Scandinavian Stern in pieces, and is still coveted secret unrevealed.",
+              "start_char_index": 2179,
+              "end_char_index": 2303,
+              "source_sentence": "Enraged\nat their disappointment, the Irish soldiers hewed the stern northman in pieces, and the coveted\nsecret is still unrevealed.",
+              "score": 0.8140799403190613
+            }
+        ]
+    """
+    res_list = []
+    try:
+        source_sent = re.split(r' *[\.\?!][\'"\)\]]* *', source_doc)
+        source_sent = [text for text in source_sent if text]
+
+        for input_sent_dict in nonmatch_lst:
+            input_sent = input_sent_dict['sentence']
+            if len(input_sent.split()) <= 3:
+                continue
+
+            source_embeddings = model.encode(source_sent, device=device)
+            input_embeddings = model.encode(input_sent, device=device)
+
+            res = cosine_similarity(
+                    [input_embeddings],
+                    source_embeddings
+                )
+
+            score = float(max(res[0]))
+
+            if score > threshold:
+                temp = input_sent_dict
+                temp['source_sentence'] = source_sent[res[0].argmax()]
+                temp['source_doc_name'] = source_doc_name
+                temp['score'] = score
+                res_list.append(temp)
+    except:
+        pass
+                
+    return res_list
+
+# 3.8. Calculate cosine similarity scores
+def calc_cossim(text_fileText, orig_fileText, fileName):
+    sentences = get_preprocessed_sent(text_fileText)
+    direct_match, direct_match_ind = get_matching_texts(sentences, orig_fileText, fileName)
+    nonmatch_lst = get_non_direct_texts(sentences, direct_match_ind)
+    model = load_model(BERTMODEL_BUCKET, BERTMODEL_PATH)
+    para_match = get_paraphrase_predictions(model, nonmatch_lst, orig_fileText, fileName, 0.7, get_default_device())
+    direct_match, para_match = modified_output_lists(direct_match, para_match, threshold=0.95)
+    direct_match_score = get_avg_score(sentences, direct_match)
+    para_match_score = get_avg_score(sentences, para_match)
+
+    return direct_match, direct_match_score, para_match, para_match_score
+
+# 4. Preprocess DF
+def preprocess(df): 
+    df['direct_detect'] = df['direct_detect'].astype('object')
+    df['para_detect'] = df['para_detect'].astype('object')
+    for ind, row in df.iterrows():
+        text_og = row['text_og']
+        text_para = row['text_para']
+        file_num = row['file_num']
+        
+        # populate containment-1 feature if missing
+        if pd.isna(row['c_1']):
+            df.at[ind, 'c_1'] = calc_containment(text_para, text_og, 1)
+        # populate containment-4 feature if missing
+        if pd.isna(row['c_4']):
+            df.at[ind, 'c_4'] = calc_containment(text_para, text_og, 4)
+        # populate containment-4 feature if missing
+        if pd.isna(row['c_5']):
+            df.at[ind, 'c_5'] = calc_containment(text_para, text_og, 5)
+        # populate lcs_word feature if missing
+        if pd.isna(row['lcs_word']):
+            df.at[ind, 'lcs_word'] = calc_lcs(text_para, text_og)
+        # populate para_detect and para_training score if missing
+        if pd.isna(row['para_detect_score']) or pd.isna(row['direct_detect_score']):
+            direct_detect, direct_detect_score, para_detect, para_detect_score = calc_cossim(text_para, text_og, file_num)
+            df.at[ind, 'direct_detect'] = json.dumps(direct_detect)
+            df.at[ind, 'para_detect'] = json.dumps(para_detect)
+            df.at[ind, 'direct_detect_score'] = direct_detect_score
+            df.at[ind, 'para_detect_score'] = para_detect_score
+
+    return df
+
+if __name__ == '__main__':
+    print('Starting the training.')
+    try:
+        df = pd.read_csv(os.path.join(training_path,'train.csv'), index_col=[0])
+        df = preprocess(df)
+
+        # train-test-split
+        train, test = train_test_split(df, test_size=0.2)
+        # split data into X and y
+        df_train_X = train[['c_1', 'c_4', 'c_5', 'lcs_word', "para_detect_score", "direct_detect_score"]]
+        df_train_Y = train['target']
+
+        df_test_X = test[['c_1', 'c_4', 'c_5', 'lcs_word', "para_detect_score", "direct_detect_score"]]
+        df_test_Y = test['target']
+
+        # Train model
+        # define hyperparameters to run through
+        param_grid = [    
+            {'penalty' : ['l1', 'l2', 'elasticnet', 'none'],
+            'C' : np.logspace(-4, 4, 20),
+            'solver' : ['lbfgs','newton-cg','liblinear','sag','saga'],
+            'max_iter' : [100, 1000,2500, 5000]
+            }
+        ]
+        
+        logreg = LogisticRegression()
+
+        clf = GridSearchCV(logreg, param_grid = param_grid, cv = 3, verbose=True, n_jobs=-1, scoring='f1')
+        best_clf = clf.fit(df_train_X, df_train_Y)
+
+        best_y_pred = clf.predict(df_test_X)
+
+        model_output_path = os.path.join(model_path, 'logReg_F1_model.joblib')
+        os.makedirs(os.path.dirname(model_output_path), exist_ok=True)
+        with open(model_output_path, 'wb') as f:
+            joblib.dump(best_clf,f)
+        
+        print("Model parameters: ")
+        print(best_clf.best_params_)
+        
+        # calculate scores
+        report_dict = {}
+        report_dict['recall'] = recall_score(best_y_pred, df_test_Y)
+        report_dict['f1'] = f1_score(best_y_pred, df_test_Y)
+        report_dict['accuracy'] =accuracy_score(best_y_pred, df_test_Y)
+        report_dict['precision'] = precision_score(best_y_pred, df_test_Y)
+
+        print("Model performance: ")
+        print(json.dumps(report_dict))
+        evaluation_output_path = os.path.join(output_path, "evaluation.json")
+        os.makedirs(os.path.dirname(evaluation_output_path), exist_ok=True)
+        with open(evaluation_output_path, "w") as f:
+            f.write(json.dumps(report_dict))
+
+        print('Training complete.')
+        
+    except Exception as e:
+        # Write out an error file. This will be returned as the failureReason in the
+        # DescribeTrainingJob result.
+        trc = traceback.format_exc()
+        with open(os.path.join(output_path, 'failure'), 'w') as s:
+            s.write('Exception during training: ' + str(e) + '\n' + trc)
+        # Printing this causes the exception to be in the training job logs, as well.
+        print('Exception during training: ' + str(e) + '\n' + trc, file=sys.stderr)
+        # A non-zero exit code causes the training job to be marked as Failed.
+        sys.exit(255)
+        
+    sys.exit(0)
