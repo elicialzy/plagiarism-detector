@@ -1,27 +1,28 @@
 import os
+
 os.environ['TRANSFORMERS_CACHE'] = '/tmp/.cache/huggingface/hub'
 
 import difflib
-import json
+import io
 import re
 from statistics import mean
 
 import boto3
 import joblib
-import nltk
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from textmatcher import Matcher, Text
 
-
 ######## CONFIGURATIONS ########
 
-s3_bucket = 'nus-sambaash-2'
-s3_training_data_filepath = 'plagiarism-detector/webis_db.csv'
-sentbert_model_name = 'models/trained_bert_model.joblib'
-final_model_name = 'models/final_model.joblib'
+s3_bucket = 'nus-sambaash'
+s3_webis_data_filepath = 'plagiarism-detector/data/webis_db.csv'
+s3_training_data_filepath = 'plagiarism-detector/data/train.csv'
+s3_output_data_filepath = 'plagiarism-detector/data/output.csv'
+sentbert_model_name = 'plagiarism-detector/models/trained_bert_model.joblib'
+final_model_name = 'plagiarism-detector/models/final_model.joblib'
 ngrams_lst = [1,4,5]
 
 
@@ -162,9 +163,25 @@ def get_avg_score(input_text_lst, output_lst):
 
 ######## PARAPHRASED MATCHING FUNCTIONS ########
 
+def load_s3_model(s3_bucket, s3_filepath):
+    """
+    Load trained model from S3.
+
+    Args:
+        s3_bucket (str): Name of S3 bucket.
+        s3_filepath (str): Filepath of trained model in S3.
+
+    Returns:
+        model (SentenceTransformers or LogisticRegression): Trained model.
+    """
+    s3_client = boto3.client('s3')
+    obj = s3_client.get_object(Bucket=s3_bucket, Key= s3_filepath)
+    model = joblib.load(io.BytesIO(obj['Body'].read()))
+    return model
+
 def load_model(model_name):
     """
-    Load trained model from S3 bucket.
+    Load trained model from joblib.
 
     Args:
         model_name (str): Name of trained model.
@@ -373,7 +390,7 @@ def get_flag_score_prediction(final_model_name, feature_df):
         plagiarism_flag (boolean): 1 means the document is plagiarised, vice-versa.
         plagiarism_scoreability (float): Probability of the document being flagged as plagiarised.
     """
-    final_model = load_model(final_model_name)
+    final_model = load_s3_model(s3_bucket, final_model_name)
 
     plagiarism_flag = final_model.predict(feature_df)[0]
     plagiarism_score = final_model.predict_proba(feature_df)[:,1][0]
@@ -405,7 +422,7 @@ def one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_d
     direct_output, match_lst = get_matching_texts(input_text_lst, source_doc, source_doc_name)
     
     nonmatch_lst = get_non_direct_texts(input_text_lst, match_lst)
-    sentence_trans_model = load_model(sentbert_model_name)
+    sentence_trans_model = load_s3_model(s3_bucket, sentbert_model_name)
     paraphrase_output = get_paraphrase_predictions(sentence_trans_model, nonmatch_lst, source_doc, source_doc_name, 0.7)
 
     plagiarised_text = direct_output + paraphrase_output
@@ -437,12 +454,14 @@ def one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_ls
     Returns:
         output_dict (dict): Dictionary containing comparison results (name of input document, plagiarised flag, score and texts).
     """
-
     plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, source_doc, source_doc_name, input_doc)
 
-    feature_df = get_feature_dict(containment_scores, lcm_score, direct_avg_score, paraphrase_avg_score)
-    
+    feature_df = get_feature_dict(containment_scores, lcm_score, direct_avg_score, paraphrase_avg_score)    
     plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
+
+    #if no plagiarised text, set flag=0
+    if len(plagiarised_text) == 0:
+        plagiarism_flag = 0
     
     output_dict = {'input_doc_name': input_doc_name,
                    'plagiarism_flag': plagiarism_flag, 
@@ -477,14 +496,14 @@ def get_one_one_matching_output(sentbert_model_name, final_model_name, ngrams_ls
         temp_dict = one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_doc_name, input_doc, input_doc_name)
         output_lst.append(temp_dict)
 
-        add_input_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath)
+        add_input_training_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath)
 
     return output_lst
 
 
 ######## 1-MANY MATCHING FINAL OUTPUT GENERATION FUNCTIONS ########
 
-def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_doc_name):
+def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_lst, input_doc, input_doc_name):
     """
     One-to-many matching function - given 1 input document & >1 source documents, compare and return the plagiarised flag, score and plagiarised texts.
     Args:
@@ -498,15 +517,16 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
     Returns:
         output_dict (dict): Dictionary containing all comparison results, averaged across all source_documents (name of input document, plagiarised flag, score and texts).
     """
-
     plagiarised_text_lst = []
     direct_avg_score_lst = []
     paraphrase_avg_score_lst = []
     containment_scores_lst = []
     lcm_score_lst = []
 
-    for i in source_docs:
-        plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, i['source_doc'], i['source_doc_name'], input_doc)
+    webis_df = read_s3_df(s3_bucket, s3_webis_data_filepath).head(2)
+
+    for index, row in webis_df.iterrows():
+        plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, row['text'], row['file_num'], input_doc)
                 
         plagiarised_text_lst = plagiarised_text_lst + plagiarised_text
         direct_avg_score_lst.append(direct_avg_score)
@@ -517,10 +537,9 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
     avg_containment_scores = get_n_avg_containment_scores(containment_scores_lst, ngrams_lst)
 
     feature_df = get_feature_dict(avg_containment_scores, mean(lcm_score_lst), mean(direct_avg_score_lst), mean(paraphrase_avg_score_lst))
+    print(feature_df)
 
     plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
-
-    add_input_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath)
 
     output_dict = {'input_doc_name': input_doc_name,
                     'plagiarism_flag': plagiarism_flag, 
@@ -565,7 +584,7 @@ def upload_to_s3(local_file, s3_bucket, s3_filepath):
 
     return s3_url
 
-def add_input_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath):
+def add_input_training_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath):
     """
     Adds the new input and source documents back to training data file in S3 bucket.
 
@@ -574,26 +593,58 @@ def add_input_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_trainin
         input_doc (str): Input document.
         input_doc_name (str): Name of input document.
         s3_bucket (str): Name of S3 bucket.
-        s3_filepath (str): Filepath of file in S3.
+        s3_training_data_filepath (str): Filepath of file in S3.
     """
     training_df = read_s3_df(s3_bucket, s3_training_data_filepath)
     
     for dict in source_docs:
         data = {
             "file_num": dict['source_doc_name'],
-            "text": dict['source_doc']
+            "text_para": dict['source_doc']
         }
         training_df = training_df.append(data, ignore_index=True) 
 
     data = {
         "file_num": input_doc_name,
-        "text": input_doc
+        "text_para": input_doc
     }
     training_df = training_df.append(data, ignore_index=True) 
     
-    training_df.to_csv('/tmp/webis_db.csv', index=False)
-    upload_to_s3('/tmp/webis_db.csv', s3_bucket, s3_training_data_filepath)
+    training_df.to_csv('/tmp/final_train.csv', index=False)
+    upload_to_s3('/tmp/final_train.csv', s3_bucket, s3_training_data_filepath)
 
     return None
 
+def add_output_data(user_id, input_doc, input_doc_name, response, matching_type, s3_bucket, s3_output_data_filepath, source_docs):
+    """
+    Adds the new input, source documents and API response to output data file in S3 bucket.
 
+    Args:
+        created_at (datetime): Datetime when data is inserted.
+        user_id (str): user ID.
+        nput_doc (str): Input document.
+        input_doc_name (str): Name of input document.
+        response (dict/ list[dict)]: API response body.
+        s3_bucket (str): Name of S3 bucket.
+        s3_output_data_filepath (str): Filepath of file in S3.
+        source_docs (list[dict]): List of dictionaries containing source documents & source document name. E.g. [{'source_doc_name': test1, 'source_doc': teststr}]
+    """
+    output_df = read_s3_df(s3_bucket, s3_output_data_filepath)
+
+    data = {
+            "created_at": pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S"),
+            "matching_type": matching_type,
+            "user_id": user_id,
+            "source_docs": source_docs,
+            "input_doc": input_doc,
+            "input_doc_name": input_doc_name,
+            "plagiarism_flag": response["plagiarism_flag"],
+            "plagiarism_score": response["plagiarism_score"],
+            "plagiarised_text": response["plagiarised_text"]
+        }
+    output_df = output_df.append(data, ignore_index=True) 
+    
+    output_df.to_csv('/tmp/output.csv', index=False)
+    upload_to_s3('/tmp/output.csv', s3_bucket, s3_output_data_filepath)
+
+    return None
