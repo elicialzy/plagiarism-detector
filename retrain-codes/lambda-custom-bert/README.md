@@ -14,7 +14,7 @@ line 26: Prefix of subsequent training jobs
     ```
 
   Configure AWS with relevant credentials
-  * npm
+  * aws
     ```sh
     aws configure
     ```
