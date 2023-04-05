@@ -6,7 +6,7 @@
 * [line 57](https://github.com/elicialzy/plagiarism-detector/blob/4294194b6c587bb9561bd5c43b9d0ac91b981a6c/retrain-codes/train-custom-ml/container/codes/train#L57) - BERTMODEL_PATH: path where the pre-trained custom sentence transformer model resides
 
 ### Prerequisites (which have already been done)
-  ```
+
 S3 bucket with training data in nus-sambaash/plagiarism-detector/data/train.csv
 S3 bucket with pre-trained sentence bert model in nus-sambaash/plagiarism-detector/models/trained_bert_model.joblib
 
