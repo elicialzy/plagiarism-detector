@@ -1,6 +1,6 @@
 ### Prerequisites (which have already been done)
 
-S3 bucket with training data in nus-sambaash/plagiarism-detector/data/train.csv
+S3 bucket with training data in `nus-sambaash/plagiarism-detector/data/train.csv`
 
 ### Instructions - 
 
