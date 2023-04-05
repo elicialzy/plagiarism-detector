@@ -6,10 +6,10 @@ This directory contains the necessary codes and instructions to set up an automa
 
 ## Directory
 [assets/](assets/) - contains necessary datasets for testing the continuous learning pipeline
-[a relative link](lambda-custom-bert/) - contains scripts for deploying lambda function to trigger SageMaker Training Job for our custom BERT model
-[a relative link](lambda-custom-ml/) - contains scripts for deploying lambda function to trigger SageMaker Training Job for our custom logistic regression model
-[a relative link](train-custom-bert/) - contains scripts for dockerizing BERT model training and uploading it onto ECR
-[a relative link](train-custom-ml/) - contains scripts for dockerizing logistic regression model training and uploading it onto ECR
+[lambda-custom-bert/](lambda-custom-bert/) - contains scripts for deploying lambda function to trigger SageMaker Training Job for our custom BERT model
+[lambda-custom-ml/](lambda-custom-ml/) - contains scripts for deploying lambda function to trigger SageMaker Training Job for our custom logistic regression model
+[train-custom-bert/](train-custom-bert/) - contains scripts for dockerizing BERT model training and uploading it onto ECR
+[train-custom-ml/](train-custom-ml/) - contains scripts for dockerizing logistic regression model training and uploading it onto ECR
 
 ## Steps
 1. Follow the steps in train-custom-bert
