@@ -1,8 +1,9 @@
 ### Custom Fields to update
 [serverless.yml](serverless.yml)
-[line 19](https://github.com/elicialzy/plagiarism-detector/blob/7d31029ccde33f4b62f3b8ac20ea31c76ea50558/retrain-codes/lambda-custom-ml/serverless.yml#L19): SageMaker Excution Role
-[line 25](https://github.com/elicialzy/plagiarism-detector/blob/7d31029ccde33f4b62f3b8ac20ea31c76ea50558/retrain-codes/lambda-custom-ml/serverless.yml#L25): Name of SageMaker Training Job to copy from
-[line 26](https://github.com/elicialzy/plagiarism-detector/blob/7d31029ccde33f4b62f3b8ac20ea31c76ea50558/retrain-codes/lambda-custom-ml/serverless.yml#L26): Prefix of subsequent training jobs
+
+* [line 19](https://github.com/elicialzy/plagiarism-detector/blob/7d31029ccde33f4b62f3b8ac20ea31c76ea50558/retrain-codes/lambda-custom-ml/serverless.yml#L19): SageMaker Excution Role
+* [line 25](https://github.com/elicialzy/plagiarism-detector/blob/7d31029ccde33f4b62f3b8ac20ea31c76ea50558/retrain-codes/lambda-custom-ml/serverless.yml#L25): Name of SageMaker Training Job to copy from
+* [line 26](https://github.com/elicialzy/plagiarism-detector/blob/7d31029ccde33f4b62f3b8ac20ea31c76ea50558/retrain-codes/lambda-custom-ml/serverless.yml#L26): Prefix of subsequent training jobs
 
 ### Prerequisites
 
