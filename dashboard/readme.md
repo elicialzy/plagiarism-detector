@@ -1,4 +1,4 @@
-# getCloudwatchMetrics1to1 and getCloudwatchMetrics1ton Python functions
+# Getting CloudWatch Metrics into S3
 
 This Python script retrieves necessary Cloudwatch log data, adapts it to the format needed for QuickSight, and transfers the data to S3. It uses `boto3` to interact with the AWS Cloudwatch, S3 and Lambda services. The script performs the following actions:
 
@@ -16,7 +16,7 @@ This Python script retrieves necessary Cloudwatch log data, adapts it to the for
     -   highest_duration_1to1.json
     -   errors_1to1.json
    ## getCloudwatchMetrics1ton
-   1.  Retrieves Cloudwatch metrics data for `plagiarism_1ton` Lambda function in the specified time period for the following metrics:
+1.  Retrieves Cloudwatch metrics data for `plagiarism_1ton` Lambda function in the specified time period for the following metrics:
     -   Invocations
     -   Average Duration
     -   Maximum Duration
