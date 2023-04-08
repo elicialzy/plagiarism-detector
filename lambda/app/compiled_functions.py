@@ -4,6 +4,7 @@ os.environ['TRANSFORMERS_CACHE'] = '/tmp/.cache/huggingface/hub'
 
 import difflib
 import io
+from io import BytesIO
 import re
 from statistics import mean
 
@@ -14,16 +15,42 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from textmatcher import Matcher, Text
+from pypdf import PdfReader
 
 ######## CONFIGURATIONS ########
 
 s3_bucket = 'nus-sambaash'
 s3_webis_data_filepath = 'plagiarism-detector/data/webis_db.csv'
+s3_pdf_filepath = 'plagiarism-detector/data/pdfs'
 s3_training_data_filepath = 'plagiarism-detector/data/train.csv'
 s3_output_data_filepath = 'plagiarism-detector/data/output.csv'
 sentbert_model_name = 'plagiarism-detector/models/trained_bert_model.joblib'
 final_model_name = 'plagiarism-detector/models/final_model.joblib'
 ngrams_lst = [1,4,5]
+
+######## PREPROCESSING FUNCTIONS ########
+
+def read_s3_pdf(s3_bucket, filename):
+    """
+    Returns string of parsed text from a pdf file in S3
+
+    Args:
+        s3_bucket (str): S3 bucket where the pdf file is stored.
+        filename (str): Folderpath + file name where the pdf file is stored.
+    
+    Returns:
+        text (str): String of parsed text from pdf file
+    """
+    s3_client = boto3.client('s3')
+    filepath = os.path.join(s3_pdf_filepath, filename)
+    s3_obj= s3_client.get_object(Bucket=s3_bucket, Key=filepath)
+    reader = PdfReader(BytesIO(s3_obj['Body'].read()))
+    text = ""
+
+    for page in reader.pages:
+        text += page.extract_text().replace('\n', ' ')
+
+    return text
 
 
 ######## DIRECT MATCHING FUNCTIONS ########
@@ -473,37 +500,32 @@ def one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_ls
 
 ######## 1-1 MATCHING FINAL OUTPUT GENERATION FUNCTIONS ########
 
-def get_one_one_matching_output(sentbert_model_name, final_model_name, ngrams_lst, source_docs, input_doc, input_doc_name):
+def get_one_one_matching_output(sentbert_model_name, final_model_name, ngrams_lst, source_doc_name, input_doc_name):
     """
     One-to-one matching function - given 2 documents, compare and return the plagiarised flag, score and plagiarised texts.
     Args:
         sentbert_model_name (str): Filepath of trained Sentence Transformer model.
         final_model_name (str): Filepath of trained final model.
         ngrams_lst (lst): List of selected n_grams used to generate containment scores.
-        source_docs (list[dict]): List of dictionaries containing source documents & source document name. E.g. [{'source_doc_name': test1, 'source_doc': teststr}]
-        input_doc (str): Input document.
-        input_doc_name (str): Name of input document.
+        source_doc_name (str): Name of source document in s3.
+        input_doc_name (str): Name of input document in s3.
     
     Returns:
-        output_lst (list[dict]): List of dictionaries containing all comparison results (name of input document, plagiarised flag, score and texts).
+        res (dict): Dictionary containing all comparison results (name of input document, plagiarised flag, score and texts).
     """
-    output_lst = []
-    for i in source_docs:
+    input_doc = read_s3_pdf(s3_bucket, os.path.join(s3_pdf_filepath, input_doc_name))
+    source_doc = read_s3_pdf(s3_bucket, os.path.join(s3_pdf_filepath, source_doc_name))
 
-        source_doc = i['source_doc']
-        source_doc_name = i['source_doc_name']
+    res = one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_doc_name, input_doc, input_doc_name)
 
-        temp_dict = one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_doc_name, input_doc, input_doc_name)
-        output_lst.append(temp_dict)
+    add_input_training_data(source_doc_name, source_doc, input_doc, s3_bucket, s3_training_data_filepath)
 
-        add_input_training_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath)
-
-    return output_lst
+    return res
 
 
 ######## 1-MANY MATCHING FINAL OUTPUT GENERATION FUNCTIONS ########
 
-def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_lst, input_doc, input_doc_name):
+def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_lst, input_doc_name):
     """
     One-to-many matching function - given 1 input document & >1 source documents, compare and return the plagiarised flag, score and plagiarised texts.
     Args:
@@ -511,7 +533,6 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
         final_model_name (str): Filepath of trained final model.
         ngrams_lst (lst): List of selected n_grams used to generate containment scores.
         source_docs (list[dict]): List of dictionaries containing source documents & source document name. E.g. [{'source_doc_name': test1, 'source_doc': teststr}]
-        input_doc (str): Input document.
         input_doc_name (str): Name of input document.
     
     Returns:
@@ -523,9 +544,12 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
     containment_scores_lst = []
     lcm_score_lst = []
 
+    input_doc = read_s3_pdf(s3_bucket, os.path.join(s3_pdf_filepath, input_doc_name))
     webis_df = read_s3_df(s3_bucket, s3_webis_data_filepath).head(2)
 
     for index, row in webis_df.iterrows():
+        if row['file_num'] == input_doc_name:
+            continue
         plagiarised_text, direct_avg_score, paraphrase_avg_score, containment_scores, lcm_score = one_one_matching_texts(sentbert_model_name, ngrams_lst, row['text'], row['file_num'], input_doc)
                 
         plagiarised_text_lst = plagiarised_text_lst + plagiarised_text
@@ -584,38 +608,57 @@ def upload_to_s3(local_file, s3_bucket, s3_filepath):
 
     return s3_url
 
-def add_input_training_data(source_docs, input_doc, input_doc_name, s3_bucket, s3_training_data_filepath):
+def add_input_training_data(source_doc_name, source_doc, input_doc, s3_bucket, s3_training_data_filepath):
     """
     Adds the new input and source documents back to training data file in S3 bucket.
 
     Args:
-        source_docs (list[dict]): A list of dictionaries containing the input and source documents.
+        source_doc_name (str): Name of source document.
+        source_doc (str): Source document.
         input_doc (str): Input document.
         input_doc_name (str): Name of input document.
         s3_bucket (str): Name of S3 bucket.
         s3_training_data_filepath (str): Filepath of file in S3.
     """
     training_df = read_s3_df(s3_bucket, s3_training_data_filepath)
-    
-    for dict in source_docs:
-        data = {
-            "file_num": dict['source_doc_name'],
-            "text_para": dict['source_doc']
-        }
-        training_df = training_df.append(data, ignore_index=True) 
 
-    data = {
-        "file_num": input_doc_name,
-        "text_para": input_doc
-    }
+    data = pd.DataFrame({
+        "file_num": [source_doc_name],
+        "text_og": [source_doc],
+        "text_para": [input_doc]
+    })
     training_df = training_df.append(data, ignore_index=True) 
     
-    training_df.to_csv('/tmp/final_train.csv', index=False)
-    upload_to_s3('/tmp/final_train.csv', s3_bucket, s3_training_data_filepath)
+    training_df.to_csv('/tmp/train.csv', index=False)
+    upload_to_s3('/tmp/train.csv', s3_bucket, s3_training_data_filepath)
 
     return None
 
-def add_output_data(user_id, input_doc, input_doc_name, response, matching_type, s3_bucket, s3_output_data_filepath, source_docs):
+def add_input_database(user_id, input_doc_name, input_doc, s3_bucket, s3_webis_data_filepath):
+    """
+    Adds the new input and source documents back to existing database for documents to be checked against in S3 bucket.
+
+    Args:
+        input_doc_name (str): Name of input document.
+        input_doc (str): Input document.
+        s3_bucket (str): Name of S3 bucket.
+        s3_webis_data_filepath (str): Filepath of file in S3.
+    """
+    webis_df = read_s3_df(s3_bucket, s3_webis_data_filepath)
+
+    data = pd.DataFrame({
+        "user_id": [user_id],
+        "file_num": [input_doc_name],
+        "text": [input_doc]
+    })
+    webis_df = pd.concat([webis_df, data], ignore_index=True) 
+    
+    webis_df.to_csv('/tmp/webis_db.csv', index=False)
+    upload_to_s3('/tmp/webis_db.csv', s3_bucket, s3_webis_data_filepath)
+
+    return None
+
+def add_output_data(user_id, input_doc_name, response, matching_type, s3_bucket, s3_output_data_filepath, source_doc_name):
     """
     Adds the new input, source documents and API response to output data file in S3 bucket.
 
@@ -635,8 +678,7 @@ def add_output_data(user_id, input_doc, input_doc_name, response, matching_type,
             "created_at": pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S"),
             "matching_type": matching_type,
             "user_id": user_id,
-            "source_docs": source_docs,
-            "input_doc": input_doc,
+            "source_doc_name": source_doc_name,
             "input_doc_name": input_doc_name,
             "plagiarism_flag": response["plagiarism_flag"],
             "plagiarism_score": response["plagiarism_score"],
