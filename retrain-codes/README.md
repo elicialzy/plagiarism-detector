@@ -1,8 +1,37 @@
-## About
+# Plagiarism Detection Continuous Learning Pipeline
 
+## Description
 This directory contains the necessary codes and instructions to set up an automated continuous learning pipeline in AWS sagemaker. There are 2 sub-pipelines involved:
 * custom-ml
 * custom-bert
+
+## Folder Structure
+```
+retrain-codes/
+├── assets 
+│   ├── df10.csv
+│   ├── final_train.csv
+├── lambda-custom-bert
+│   ├── handler.py
+│   ├── serverless.yml
+├── lambda-custom-ml
+│   ├── handler.py
+│   ├── serverless.yml
+├── train-custom-bert
+│   ├── container/
+│   │   ├── codes   
+│   │   ├──   ├── train    
+│   │   ├── Dockerfile
+│   │   ├── build_and_push.sh   
+│   ├── run_scripts.ipynb
+├── train-custom-ml
+│   ├── container/
+│   │   ├── codes   
+│   │   ├──   ├── train    
+│   │   ├── Dockerfile
+│   │   ├── build_and_push.sh   
+│   ├── run_scripts.ipynb
+```
 
 ## Directory
 [assets/](assets/) - contains necessary datasets for testing the continuous learning pipeline
