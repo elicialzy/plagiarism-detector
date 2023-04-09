@@ -75,6 +75,56 @@ retrain-codes/
 
 [retrain-codes//](retrain-codes/) - Contains scripts to set up an automated continuous learning pipeline for the custom BERT and Logistic Regression models on AWS Sagemaker.
 
+## AWS Assets
+1. **Elastic Container Registry (ECR)**
+- Repository Name:
+    - plagiarism-detector
+- Image Tags:
+    - fileupload
+    - oneone
+    - onemany
+2. **Lambda Functions**
+- Function Name:
+    - plagiarism_fileupload
+    - plagiarism_1to1
+    - plagiarism_1ton
+
+3. **API Gateway**
+- API Name:
+    - plagiarism_detector (rgbghnea40)
+- Resources & Methods Name:
+    - /upload (PUT)
+    - /get1to1_matches (POST)
+    - /get1ton_matches (POST)
+
+4. **S3**
+- Bucket Name:
+    - nus-sambaash
+- Directory:
+```
+    plagiarism-detector-dashboard-1to1/
+    ├── avg_duration_1to1.json
+    ├── errors_1to1.json
+    ├── highest_duration_1to1.json
+    ├── invocations_1to1.json
+    plagiarism-detector-dashboard-1ton/
+    ├── avg_duration_1ton.json
+    ├── errors_1ton.json
+    ├── highest_duration_1ton.json
+    ├── invocations_1ton.json
+    plagiarism-detector/
+    ├── data/
+    │   ├── output.csv
+    │   ├── pdfs/
+    │   ├── train.csv
+    │   ├── webis_db.csv
+    ├── models/
+    │   ├── final_model.joblib
+    │   ├── trained_bert_model.joblib
+    ├── training-jobs/ 
+```
+
+
 ## API Sample
 ### 1. upload
 `PUT /upload`
@@ -195,50 +245,3 @@ https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1ton_matches
 
 ## Dashboard
 ![image](https://user-images.githubusercontent.com/65524472/230664206-b353f877-5d55-41ec-9fdf-e54b115037af.png)
-
-## AWS Assets
-1. Elastic Container Registry (ECR)
-- Repository
-    - plagiarism-detector
-- Images
-    - fileupload
-    - oneone
-    - onemany
-2. Lambda Functions
-- Functions:
-    - plagiarism_fileupload
-    - plagiarism_1to1
-    - plagiarism_1ton
-
-3. API Gateway
-- API:
-    - plagiarism_detector (rgbghnea40)
-- Resources & Methods
-    - /upload (PUT)
-    - /get1to1_matches (POST)
-    - /get1ton_matches (POST)
-
-4. S3
-- Bucket:
-    - nus-sambaash
-- Directory:
-    plagiarism-detector-dashboard-1to1/
-    ├── avg_duration_1to1.json
-    ├── errors_1to1.json
-    ├── highest_duration_1to1.json
-    ├── invocations_1to1.json
-    plagiarism-detector-dashboard-1ton/
-    ├── avg_duration_1ton.json
-    ├── errors_1ton.json
-    ├── highest_duration_1ton.json
-    ├── invocations_1ton.json
-    plagiarism-detector/
-    ├── data/
-    │   ├── output.csv
-    │   ├── pdfs/
-    │   ├── train.csv
-    │   ├── webis_db.csv
-    ├── models/
-    │   ├── final_model.joblib
-    │   ├── trained_bert_model.joblib
-    ├── training-jobs/ 
