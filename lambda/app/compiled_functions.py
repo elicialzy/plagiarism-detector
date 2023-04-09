@@ -566,7 +566,6 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
     avg_containment_scores = get_n_avg_containment_scores(containment_scores_lst, ngrams_lst)
 
     feature_df = get_feature_dict(avg_containment_scores, mean(lcm_score_lst), mean(direct_avg_score_lst), mean(paraphrase_avg_score_lst))
-    print(feature_df)
 
     plagiarism_flag, plagiarism_score = get_flag_score_prediction(final_model_name, feature_df)
 
