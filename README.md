@@ -125,20 +125,27 @@ retrain-codes/
 ```
 
 
-## API Sample
+## API Documentation
+
 ### 1. upload
-`PUT /upload`
+`PUT /upload` - Upload PDF documents to S3
 ```
 https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/upload
 ```
 **Request Headers**
+Parameters  | Type | Description | Example
+------------- | ------------- | ------------- | ------------- |
+Content-Type | string | Content type of request headers | 'application/pdf'
+file_name  | string  | Filename of input document   | 'john_assignment1.pdf'
+user_id | string  | User ID  | ‘john’
+
 ```
 Content-Type: application/pdf
 file_name : john_assignment1.pdf
 user_id: john
 ```
 
-**Response**
+**Response Body**
 ```
 {
     "statusCode": 200,
@@ -147,20 +154,26 @@ user_id: john
 ```
 
 ### 2. get_1to1_matches
-`POST /get_1to1_matches`
+`POST /get_1to1_matches` - Given 2 documents, get plagiarism flag, score and plagiarised texts
 ```
 https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1to1_matches
 ```
 **Request Body**
+Parameters  | Type | Description | Example
+------------- | ------------- | ------------- | ------------- |
+user_id | string | User ID | 'jason'
+input_doc_name  | string  | Filename of input document  | 'jason_assignment1.pdf'
+source_doc_name | string  | Filename of source document  | ‘john_assignment1.pdf'
+
 ```
 {
-    "user_id": "test_123_1to1",
+    "user_id": "jason",
     "input_doc_name": "jason_assignment1.pdf",
     "source_doc_name": "john_assignment1.pdf"
 }
 ```
 
-**Response**
+**Response Body**
 ```
 {
     "input_doc_name": "jason_assignment1.pdf",
@@ -196,19 +209,24 @@ https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1to1_matches
 ```
 
 ### 3. get_1ton_matches
-`POST /get_1ton_matches`
+`POST /get_1ton_matches` - Given 1 document, check against documents database to get plagiarism flag, score and plagiarised texts
 ```
 https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1ton_matches
 ```
 **Request Body**
+Parameters  | Type | Description | Example
+------------- | ------------- | ------------- | ------------- |
+user_id | string | User ID | 'jason'
+input_doc_name  | string  | Filename of input document  | 'jason_assignment1.pdf'
+
 ```
 {
-    "user_id": "test_789_1to1",
+    "user_id": "jason",
     "input_doc_name": "jason_assignment1.pdf"
 }
 ```
 
-**Response**
+**Response Body**
 ```
 {
     "input_doc_name": "jason_assignment1.pdf",
