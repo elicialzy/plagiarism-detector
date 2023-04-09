@@ -4,42 +4,60 @@ os.environ['TRANSFORMERS_CACHE'] = '/tmp/.cache/huggingface/hub'
 
 import difflib
 import io
-from io import BytesIO
 import re
+from io import BytesIO
 from statistics import mean
 
 import boto3
 import joblib
 import numpy as np
 import pandas as pd
+from pypdf import PdfReader
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from textmatcher import Matcher, Text
-from pypdf import PdfReader
 
 ######## CONFIGURATIONS ########
 
 s3_bucket = 'nus-sambaash'
-s3_webis_data_filepath = 'plagiarism-detector/data/webis_db.csv'
 s3_pdf_filepath = 'plagiarism-detector/data/pdfs'
+s3_webis_data_filepath = 'plagiarism-detector/data/webis_db.csv'
 s3_training_data_filepath = 'plagiarism-detector/data/train.csv'
 s3_output_data_filepath = 'plagiarism-detector/data/output.csv'
 sentbert_model_name = 'plagiarism-detector/models/trained_bert_model.joblib'
 final_model_name = 'plagiarism-detector/models/final_model.joblib'
 ngrams_lst = [1,4,5]
 
+
 ######## PREPROCESSING FUNCTIONS ########
+
+def read_s3_df(s3_bucket, s3_filepath):
+    """
+    Returns DataFrame of CSV file downloaded from S3 bucket.
+
+    Args:
+        s3_bucket (str): Name of S3 bucket.
+        s3_filepath (str): Filepath of CSV file in S3.
+
+    Returns:
+        df (pd.DataFrame): Dataframe of CSV file downloaded.
+    """
+    s3_client = boto3.client('s3')
+    obj = s3_client.get_object(Bucket=s3_bucket, Key= s3_filepath)
+    df = pd.read_csv(obj['Body'])
+    
+    return df
 
 def read_s3_pdf(s3_bucket, filename):
     """
-    Returns string of parsed text from a pdf file in S3
+    Returns string of parsed text from a PDF file in S3 bucket.
 
     Args:
-        s3_bucket (str): S3 bucket where the pdf file is stored.
-        filename (str): Folderpath + file name where the pdf file is stored.
+        s3_bucket (str): Name of S3 bucket.
+        filename (str): Filename of PDF file in S3.
     
     Returns:
-        text (str): String of parsed text from pdf file
+        text (str): String of parsed text from PDF file.
     """
     s3_client = boto3.client('s3')
     filepath = os.path.join(s3_pdf_filepath, filename)
@@ -204,19 +222,6 @@ def load_s3_model(s3_bucket, s3_filepath):
     s3_client = boto3.client('s3')
     obj = s3_client.get_object(Bucket=s3_bucket, Key= s3_filepath)
     model = joblib.load(io.BytesIO(obj['Body'].read()))
-    return model
-
-def load_model(model_name):
-    """
-    Load trained model from joblib.
-
-    Args:
-        model_name (str): Name of trained model.
-
-    Returns:
-        model (SentenceTransformers or LogisticRegression): Trained model.
-    """
-    model = joblib.load(model_name)
     return model
 
 def get_paraphrase_predictions(model, nonmatch_lst, source_doc, source_doc_name, threshold):
@@ -507,14 +512,14 @@ def get_one_one_matching_output(sentbert_model_name, final_model_name, ngrams_ls
         sentbert_model_name (str): Filepath of trained Sentence Transformer model.
         final_model_name (str): Filepath of trained final model.
         ngrams_lst (lst): List of selected n_grams used to generate containment scores.
-        source_doc_name (str): Name of source document in s3.
-        input_doc_name (str): Name of input document in s3.
+        source_doc_name (str): Name of source document in S3.
+        input_doc_name (str): Name of input document in S3.
     
     Returns:
         res (dict): Dictionary containing all comparison results (name of input document, plagiarised flag, score and texts).
     """
-    input_doc = read_s3_pdf(s3_bucket, os.path.join(s3_pdf_filepath, input_doc_name))
-    source_doc = read_s3_pdf(s3_bucket, os.path.join(s3_pdf_filepath, source_doc_name))
+    input_doc = read_s3_pdf(s3_bucket, input_doc_name)
+    source_doc = read_s3_pdf(s3_bucket, source_doc_name)
 
     res = one_one_matching_flag_score(sentbert_model_name, final_model_name, ngrams_lst, source_doc, source_doc_name, input_doc, input_doc_name)
 
@@ -527,7 +532,7 @@ def get_one_one_matching_output(sentbert_model_name, final_model_name, ngrams_ls
 
 def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_lst, input_doc_name):
     """
-    One-to-many matching function - given 1 input document & >1 source documents, compare and return the plagiarised flag, score and plagiarised texts.
+    One-to-many matching function - given 1 input document, compare with the database of documents in S3 and return the plagiarised flag, score and plagiarised texts.
     Args:
         sentbert_model_name (str): Filepath of trained Sentence Transformer model.
         final_model_name (str): Filepath of trained final model.
@@ -544,8 +549,8 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
     containment_scores_lst = []
     lcm_score_lst = []
 
-    input_doc = read_s3_pdf(s3_bucket, os.path.join(s3_pdf_filepath, input_doc_name))
-    webis_df = read_s3_df(s3_bucket, s3_webis_data_filepath).head(2)
+    input_doc = read_s3_pdf(s3_bucket, input_doc_name)
+    webis_df = read_s3_df(s3_bucket, s3_webis_data_filepath).head(2) # This is the database of documents to check through. We filtered only the top 2 rows for testing purposes.
 
     for index, row in webis_df.iterrows():
         if row['file_num'] == input_doc_name:
@@ -572,24 +577,7 @@ def get_one_many_matching_output(sentbert_model_name, final_model_name, ngrams_l
     
     return output_dict
 
-######## ADD NEW INPUT TO TRAINING DATAFILE ########
-
-def read_s3_df(s3_bucket, s3_filepath):
-    """
-    Returns DataFrame of CSV file downloaded from S3 bucket.
-
-    Args:
-        s3_bucket (str): Name of S3 bucket.
-        s3_filepath (str): Filepath of CSV file in S3.
-
-    Returns:
-        df (pd.DataFrame): Dataframe of CSV file downloaded.
-    """
-    s3_client = boto3.client('s3')
-    obj = s3_client.get_object(Bucket=s3_bucket, Key= s3_filepath)
-    df = pd.read_csv(obj['Body'])
-    
-    return df
+######## ADD INPUT TO S3 ########
 
 def upload_to_s3(local_file, s3_bucket, s3_filepath):
     """
@@ -634,7 +622,7 @@ def add_input_training_data(source_doc_name, source_doc, input_doc, s3_bucket, s
 
     return None
 
-def add_input_database(user_id, input_doc_name, input_doc, s3_bucket, s3_webis_data_filepath):
+def add_input_data(user_id, input_doc_name, input_doc, s3_bucket, s3_webis_data_filepath):
     """
     Adds the new input and source documents back to existing database for documents to be checked against in S3 bucket.
 
