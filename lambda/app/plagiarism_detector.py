@@ -1,16 +1,19 @@
-import json
-import boto3
 import base64
+import json
 import os
 from io import BytesIO
-from compiled_functions import get_one_one_matching_output, get_one_many_matching_output, add_output_data, add_input_database
+
+import boto3
+from compiled_functions import (add_input_data, add_output_data,
+                                get_one_many_matching_output,
+                                get_one_one_matching_output)
 from pypdf import PdfReader
 
-print('Loading function')
+######## CONFIGURATIONS ########
 
 s3_bucket = 'nus-sambaash'
-s3_webis_data_filepath = 'plagiarism-detector/data/webis_db.csv'
 s3_pdf_filepath = 'plagiarism-detector/data/pdfs'
+s3_webis_data_filepath = 'plagiarism-detector/data/webis_db.csv'
 s3_training_data_filepath = 'plagiarism-detector/data/train.csv'
 s3_output_data_filepath = 'plagiarism-detector/data/output.csv'
 sentbert_model_name = 'plagiarism-detector/models/trained_bert_model.joblib'
@@ -23,6 +26,9 @@ response_object['headers']['Content-Type'] = 'application/json'
 response_object['isBase64Encoded'] = False
 
 def file_upload_1ton(event, context):
+    """
+    Lambda function handler for the PUT /upload API request.
+    """
     s3_client = boto3.client('s3')
     file_content = event['body-json']
     filename = event["params"]["header"]["file_name"]
@@ -37,7 +43,7 @@ def file_upload_1ton(event, context):
     for page in reader.pages:
         text += page.extract_text().replace('\n', ' ')
 
-    add_input_database(userid, filename, text, s3_bucket, s3_webis_data_filepath )
+    add_input_data(userid, filename, text, s3_bucket, s3_webis_data_filepath)
 
     return {
         'statusCode': 200,
@@ -45,6 +51,9 @@ def file_upload_1ton(event, context):
     }
 
 def plagiarism_detector_1to1(event, context):
+    """
+    Lambda function handler for the POST /get_1to1_matches API request.
+    """
     try:
         event_dict = json.dumps(event)
         request_body = json.loads(event_dict)['body']
@@ -71,6 +80,9 @@ def plagiarism_detector_1to1(event, context):
     return response_object
 
 def plagiarism_detector_1ton(event, context):
+    """
+    Lambda function handler for the POST /get_1ton_matches API request.
+    """
     try:
         event_dict = json.dumps(event)
         request_body = json.loads(event_dict)['body']
