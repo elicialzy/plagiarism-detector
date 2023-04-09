@@ -2,6 +2,7 @@
 
 ## Description
 This directory contains AWS Lambda functions & Python dependencies for the 1-1 & 1-n plagiarism detection and document comparison service. The Lambda function can be deployed through container images uploaded on AWS ECR. There are 2 API services included:
+- File upload
 - 1-1 matching
 - 1-n matching
 
@@ -20,9 +21,9 @@ lambda/
 ```
 
 ## Steps
-The instructions below are for the **1-1 matching** API service. To deploy the **1-n matching** API service,
-- Replace _plagiarism_detector_1to1_ with _plagiarism_detector_1ton_
-- Replace _oneone_ image tag with _onemany_
+The instructions below are for the **1-1 matching** API service. To deploy the **1-n matching** or **file upload** API service,
+- Replace `plagiarism_detector_1to1` with `plagiarism_detector_1ton` or `plagiarism_upload`
+- Replace `oneone` image tag with `onemany` or `fileupload`
 
 1. Build docker image
 ```
@@ -47,148 +48,136 @@ $ docker push 630471847671.dkr.ecr.ap-southeast-1.amazonaws.com/plagiarism-detec
 
 ## API Documentation
 
-### get_1to1_matches
-<table>
-  <tr>
-    <th>API Name</th>
-    <td>plagiarism_detector</td>
-  </tr>
-  <tr>
-    <th>Description</th>
-    <td>Get plagiarism flag, score and plagiarised texts, given 1 input document & ≥1 source documents</td>
-  </tr>
-  <tr>
-    <th>API Endpoint</th>
-    <td>https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1to1_matches</td>
-  </tr>
-  <tr>
-    <th>HTTP Method</th>
-    <td>POST</td>
-  </tr>
-  <tr>
-    <th>Authentication</th>
-    <td>None</td>
-  </tr>
-</table>
-
+### 1. upload
+`PUT /upload` - Upload PDF documents to S3
+```
+https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/upload
+```
+**Request Headers**
 Parameters  | Type | Description | Example
 ------------- | ------------- | ------------- | ------------- |
-user_id | string | User ID | 'user_123'
-input_doc_name  | string  | Name of input document  | 'file_num_123'
-input_doc | string  | Text of input document  | ‘The castle is still so far perfect that the lower part is inhabited by a farmer's family’
-source_docs | list[dict] |  List of dictionary(s) containing name of source document & text of input document | [{"source_doc_name": "file_num_456", "source_doc": "Castle is still as perfect as the bottom is inhabited by a farmer family.}]
+Content-Type | string | Content type of request headers | 'application/pdf'
+file_name  | string  | Filename of input document   | 'john_assignment1.pdf'
+user_id | string  | User ID  | ‘john’
 
-**Sample Request**
+```
+Content-Type: application/pdf
+file_name : john_assignment1.pdf
+user_id: john
+```
+
+**Response Body**
 ```
 {
-    "user_id": "test_456_1to1",
-    "input_doc_name": "input_file_5110",
-    "input_doc": "Pride Russians suffered accordingly. While naturally precedes dramatic art poetry, drama, on the other hand, can achieve a degree of excellence where the theater is in a miserable state.",
-    "source_docs": [
-    {
-      "source_doc_name": "source_file_5110",
-      "source_doc": "The pride of the Russians did not suffer in consequence. While poetry naturally precedes dramatic art, the drama, on the other hand, cannot attain any degree of excellence where the theater is in such a miserable state"
-    }
-    ]
+    "statusCode": 200,
+    "body": "\"john_assignment1.pdf uploaded\""
 }
 ```
-**Sample Response**
-```
-[
-    {
-        "input_doc_name": "input_file_5110",
-        "plagiarism_flag": "0",
-        "plagiarism_score": 0.4142616124291516,
-        "plagiarised_text": [
-            {
-                "sentence": "Pride Russians suffered accordingly",
-                "start_char_index": 1,
-                "end_char_index": 35,
-                "source_sentence": "The pride of the Russians did not suffer in consequence",
-                "source_doc_name": "source_file_5110",
-                "score": 0.747011661529541
-            },
-            {
-                "sentence": "While naturally precedes dramatic art poetry, drama, on the other hand, can achieve a degree of excellence where the theater is in a miserable state",
-                "start_char_index": 36,
-                "end_char_index": 183,
-                "source_sentence": "achieve degree of excellence where the theater is in a miserable state ",
-                "source_doc_name": "source_file_5110",
-                "score": 0.7736753693468769
-            }
-        ]
-    }
-]
-```
 
-### 1-n Matching
-<table>
-  <tr>
-    <th>API Name</th>
-    <td>plagiarism_detector</td>
-  </tr>
-  <tr>
-    <th>Description</th>
-    <td>Get plagiarism flag, score and plagiarised texts, given 1 input document. Cross checks with the database of documents stores in S3.</td>
-  </tr>
-  <tr>
-    <th>API Endpoint</th>
-    <td>https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1ton_matches</td>
-  </tr>
-  <tr>
-    <th>HTTP Method</th>
-    <td>POST</td>
-  </tr>
-  <tr>
-    <th>Authentication</th>
-    <td>None</td>
-  </tr>
-</table>
-
+### 2. get_1to1_matches
+`POST /get_1to1_matches` - Given 2 documents, get plagiarism flag, score and plagiarised texts
+```
+https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1to1_matches
+```
+**Request Body**
 Parameters  | Type | Description | Example
 ------------- | ------------- | ------------- | ------------- |
-user_id | string | User ID | 'user_123'
-input_doc_name  | string  | Name of input document  | 'file_num_123'
-input_doc | string  | Text of input document  | ‘The castle is still so far perfect that the lower part is inhabited by a farmer's family’
+user_id | string | User ID | 'jason'
+input_doc_name  | string  | Filename of input document  | 'jason_assignment1.pdf'
+source_doc_name | string  | Filename of source document  | ‘john_assignment1.pdf'
 
-**Sample Request**
 ```
 {
-    "user_id": "test_456”,
-    "input_doc_name": "input_file_5110",
-    "input_doc": "Pride Russians suffered accordingly. While naturally precedes dramatic art poetry, drama, on the other hand, can achieve a degree of excellence where the theater is in a miserable state."
-  }
+    "user_id": "jason",
+    "input_doc_name": "jason_assignment1.pdf",
+    "source_doc_name": "john_assignment1.pdf"
+}
 ```
 
-**Sample Response**
+**Response Body**
 ```
 {
-    "input_doc_name": "input_file_5110",
-    "plagiarism_flag": "0",
-    "plagiarism_score": 0.3526763034912935,
+    "input_doc_name": "jason_assignment1.pdf",
+    "plagiarism_flag": "1",
+    "plagiarism_score": 0.8223353227765466,
     "plagiarised_text": [
         {
-            "sentence": "Pride Russians suffered accordingly",
+            "sentence": "As is generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor",
             "start_char_index": 1,
-            "end_char_index": 35,
-            "source_sentence": "The pride of the Russians did not suffer in consequence",
-            "source_doc_name": 4875,
-            "score": 0.747011661529541
+            "end_char_index": 141,
+            "source_sentence": " generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor ",
+            "source_doc_name": "john_assignment1.pdf",
+            "score": 0.9640488658284415
         },
         {
-            "sentence": "While naturally precedes dramatic art poetry, drama, on the other hand, can achieve a degree of excellence where the theater is in a miserable state",
-            "start_char_index": 36,
-            "end_char_index": 183,
-            "source_sentence": "achieve degree of excellence where the theater is in a miserable state ",
-            "source_doc_name": 4875,
-            "score": 0.7241072696029361
+            "sentence": "The dramatist Kukolnik is an example of this",
+            "start_char_index": 142,
+            "end_char_index": 185,
+            "source_sentence": "The dramatist Kukolnik is an example of this",
+            "source_doc_name": "john_assignment1.pdf",
+            "score": 1.0
+        },
+        {
+            "sentence": "He has written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation",
+            "start_char_index": 186,
+            "end_char_index": 298,
+            "source_sentence": " written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation ",
+            "source_doc_name": "john_assignment1.pdf",
+            "score": 0.9596398661682171
         }
     ]
 }
 ```
 
+### 3. get_1ton_matches
+`POST /get_1ton_matches` - Given 1 document, check against documents database to get plagiarism flag, score and plagiarised texts
+```
+https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1ton_matches
+```
+**Request Body**
+Parameters  | Type | Description | Example
+------------- | ------------- | ------------- | ------------- |
+user_id | string | User ID | 'jason'
+input_doc_name  | string  | Filename of input document  | 'jason_assignment1.pdf'
 
+```
+{
+    "user_id": "jason",
+    "input_doc_name": "jason_assignment1.pdf"
+}
+```
 
-
-
-
+**Response Body**
+```
+{
+    "input_doc_name": "jason_assignment1.pdf",
+    "plagiarism_flag": "1",
+    "plagiarism_score": 0.5822500902892679,
+    "plagiarised_text": [
+        {
+            "sentence": "As is generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor",
+            "start_char_index": 1,
+            "end_char_index": 141,
+            "source_sentence": " generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor ",
+            "source_doc_name": "4875",
+            "score": 0.9317157650164154
+        },
+        {
+            "sentence": "The dramatist Kukolnik is an example of this",
+            "start_char_index": 142,
+            "end_char_index": 185,
+            "source_sentence": "The dramatist Kukolnik is an example of this",
+            "source_doc_name": "4875",
+            "score": 1.000000238418579
+        },
+        {
+            "sentence": "He has written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation",
+            "start_char_index": 186,
+            "end_char_index": 298,
+            "source_sentence": " written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation ",
+            "source_doc_name": "4875",
+            "score": 0.9238026005035381
+        }
+    ]
+}
+```
