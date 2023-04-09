@@ -99,7 +99,7 @@ user_id: john
 ### 2. get_1to1_matches
 `POST /get_1to1_matches`
 ```
-https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/get_1to1_matches
+https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1to1_matches
 ```
 **Request Body**
 ```
@@ -148,7 +148,7 @@ https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/get_1to1_matches
 ### 3. get_1ton_matches
 `POST /get_1ton_matches`
 ```
-https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/get_1ton_matches
+https://rgbghnea40.execute-api.ap-southeast-1.amazonaws.com/dev/get_1ton_matches
 ```
 **Request Body**
 ```
@@ -195,3 +195,50 @@ https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/get_1ton_matches
 
 ## Dashboard
 ![image](https://user-images.githubusercontent.com/65524472/230664206-b353f877-5d55-41ec-9fdf-e54b115037af.png)
+
+## AWS Assets
+1. Elastic Container Registry (ECR)
+- Repository
+    - plagiarism-detector
+- Images
+    - fileupload
+    - oneone
+    - onemany
+2. Lambda Functions
+- Functions:
+    - plagiarism_fileupload
+    - plagiarism_1to1
+    - plagiarism_1ton
+
+3. API Gateway
+- API:
+    - plagiarism_detector (rgbghnea40)
+- Resources & Methods
+    - /upload (PUT)
+    - /get1to1_matches (POST)
+    - /get1ton_matches (POST)
+
+4. S3
+- Bucket:
+    - nus-sambaash
+- Directory:
+    plagiarism-detector-dashboard-1to1/
+    ├── avg_duration_1to1.json
+    ├── errors_1to1.json
+    ├── highest_duration_1to1.json
+    ├── invocations_1to1.json
+    plagiarism-detector-dashboard-1ton/
+    ├── avg_duration_1ton.json
+    ├── errors_1ton.json
+    ├── highest_duration_1ton.json
+    ├── invocations_1ton.json
+    plagiarism-detector/
+    ├── data/
+    │   ├── output.csv
+    │   ├── pdfs/
+    │   ├── train.csv
+    │   ├── webis_db.csv
+    ├── models/
+    │   ├── final_model.joblib
+    │   ├── trained_bert_model.joblib
+    ├── training-jobs/ 
