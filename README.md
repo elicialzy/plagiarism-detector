@@ -76,10 +76,122 @@ retrain-codes/
 [retrain-codes//](retrain-codes/) - Contains scripts to set up an automated continuous learning pipeline for the custom BERT and Logistic Regression models on AWS Sagemaker.
 
 ## API Sample
-### get_1to1_matches
+### 1. upload
+`PUT /upload`
+```
+https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/upload
+```
+**Request Headers**
+```
+Content-Type: application/pdf
+file_name : john_assignment1.pdf
+user_id: john
+```
 
-### get_1to1_matches
+**Response**
+```
+{
+    "statusCode": 200,
+    "body": "\"john_assignment1.pdf uploaded\""
+}
+```
 
+### 2. get_1to1_matches
+`POST /get_1to1_matches`
+```
+https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/get_1to1_matches
+```
+**Request Body**
+```
+{
+    "user_id": "test_123_1to1",
+    "input_doc_name": "jason_assignment1.pdf",
+    "source_doc_name": "john_assignment1.pdf"
+}
+```
+
+**Response**
+```
+{
+    "input_doc_name": "jason_assignment1.pdf",
+    "plagiarism_flag": "1",
+    "plagiarism_score": 0.8223353227765466,
+    "plagiarised_text": [
+        {
+            "sentence": "As is generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor",
+            "start_char_index": 1,
+            "end_char_index": 141,
+            "source_sentence": " generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor ",
+            "source_doc_name": "john_assignment1.pdf",
+            "score": 0.9640488658284415
+        },
+        {
+            "sentence": "The dramatist Kukolnik is an example of this",
+            "start_char_index": 142,
+            "end_char_index": 185,
+            "source_sentence": "The dramatist Kukolnik is an example of this",
+            "source_doc_name": "john_assignment1.pdf",
+            "score": 1.0
+        },
+        {
+            "sentence": "He has written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation",
+            "start_char_index": 186,
+            "end_char_index": 298,
+            "source_sentence": " written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation ",
+            "source_doc_name": "john_assignment1.pdf",
+            "score": 0.9596398661682171
+        }
+    ]
+}
+```
+
+### 3. get_1ton_matches
+`POST /get_1ton_matches`
+```
+https://0d2tkz6x94.execute-api.ap-southeast-2.amazonaws.com/dev/get_1ton_matches
+```
+**Request Body**
+```
+{
+    "user_id": "test_789_1to1",
+    "input_doc_name": "jason_assignment1.pdf"
+}
+```
+
+**Response**
+```
+{
+    "input_doc_name": "jason_assignment1.pdf",
+    "plagiarism_flag": "1",
+    "plagiarism_score": 0.5822500902892679,
+    "plagiarised_text": [
+        {
+            "sentence": "As is generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor",
+            "start_char_index": 1,
+            "end_char_index": 141,
+            "source_sentence": " generally the case in the beginning of every nation's literature, any writer in Russia is taken for a miracle, and regarded with stupor ",
+            "source_doc_name": "4875",
+            "score": 0.9317157650164154
+        },
+        {
+            "sentence": "The dramatist Kukolnik is an example of this",
+            "start_char_index": 142,
+            "end_char_index": 185,
+            "source_sentence": "The dramatist Kukolnik is an example of this",
+            "source_doc_name": "4875",
+            "score": 1.000000238418579
+        },
+        {
+            "sentence": "He has written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation",
+            "start_char_index": 186,
+            "end_char_index": 298,
+            "source_sentence": " written a great deal for the theater, but nothing in him is to be praised so much as his zeal in imitation ",
+            "source_doc_name": "4875",
+            "score": 0.9238026005035381
+        }
+    ]
+}
+```
 
 ## Dashboard
 ![image](https://user-images.githubusercontent.com/65524472/230664206-b353f877-5d55-41ec-9fdf-e54b115037af.png)
