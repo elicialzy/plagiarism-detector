@@ -128,7 +128,7 @@ def get_matching_texts(input_text_lst, source_doc, source_doc_name):
             if len(match) != 0:
                 match_lst.append(input_sent_dict)
                 output_dict = input_sent_dict.copy()
-                output_dict['source_sentence'] = match[0]['source_sentence']
+                output_dict['source_sentence'] = match[0]['sentence']
                 output_dict['source_doc_name'] = source_doc_name
                 output_dict['score'] = match[0]['score']
                 output_lst.append(output_dict)
